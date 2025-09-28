@@ -1,0 +1,1646 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>All-in-One Financial Calculator</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: "Arial", sans-serif;
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        min-height: 100vh;
+        padding: 20px;
+      }
+
+      .container {
+        max-width: 1200px;
+        margin: 0 auto;
+        background: white;
+        border-radius: 20px;
+        box-shadow: 0 20px 40px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+      }
+
+      .header {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        text-align: center;
+      }
+
+      .header h1 {
+        font-size: 2.5em;
+        margin-bottom: 10px;
+        font-weight: 300;
+      }
+
+      .header p {
+        font-size: 1.2em;
+        opacity: 0.9;
+      }
+
+      .tabs {
+        display: flex;
+        background: #f8f9fa;
+        overflow-x: auto;
+        border-bottom: 1px solid #dee2e6;
+        flex-wrap: wrap;
+        align-items: center;
+        justify-content: center;
+      }
+
+      .tab {
+        background: none;
+        border: none;
+        padding: 15px 20px;
+        cursor: pointer;
+        font-size: 14px;
+        font-weight: 500;
+        white-space: nowrap;
+        transition: all 0.3s ease;
+        color: #6c757d;
+      }
+
+      .tab:hover {
+        background: #e9ecef;
+        color: #495057;
+      }
+
+      .tab.active {
+        background: white;
+        color: #667eea;
+        border-bottom: 3px solid #667eea;
+      }
+
+      .calculator-content {
+        padding: 40px;
+        min-height: 600px;
+      }
+
+      .calculator {
+        display: none;
+      }
+
+      .calculator.active {
+        display: block;
+      }
+
+      .calc-row {
+        display: grid;
+        grid-template-columns: 1fr 1fr;
+        gap: 40px;
+        margin-bottom: 30px;
+      }
+
+      .input-section {
+        background: #f8f9fa;
+        padding: 30px;
+        border-radius: 15px;
+      }
+
+      .result-section {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        padding: 30px;
+        border-radius: 15px;
+      }
+
+      .form-group {
+        margin-bottom: 20px;
+      }
+
+      .form-group label {
+        display: block;
+        margin-bottom: 8px;
+        font-weight: 600;
+        color: #495057;
+      }
+
+      .form-group input,
+      .form-group select {
+        width: 100%;
+        padding: 12px 15px;
+        border: 2px solid #e9ecef;
+        border-radius: 8px;
+        font-size: 16px;
+        transition: border-color 0.3s ease;
+      }
+
+      .form-group input[type="number"] {
+        min: 0;
+      }
+
+      .form-group input:focus,
+      .form-group select:focus {
+        outline: none;
+        border-color: #667eea;
+      }
+
+      .calculate-btn {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+        color: white;
+        border: none;
+        padding: 15px 30px;
+        border-radius: 8px;
+        font-size: 16px;
+        font-weight: 600;
+        cursor: pointer;
+        width: 100%;
+        transition: transform 0.3s ease;
+      }
+
+      .calculate-btn:hover {
+        transform: translateY(-2px);
+      }
+
+      .result-item {
+        margin-bottom: 15px;
+        padding-bottom: 15px;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.2);
+      }
+
+      .result-item:last-child {
+        border-bottom: none;
+        margin-bottom: 0;
+      }
+
+      .result-label {
+        font-size: 14px;
+        opacity: 0.8;
+        margin-bottom: 5px;
+      }
+
+      .result-value {
+        font-size: 24px;
+        font-weight: 700;
+      }
+
+      .breakdown {
+        margin-top: 20px;
+      }
+
+      .breakdown h3 {
+        margin-bottom: 15px;
+        color: white;
+      }
+
+      .breakdown-item {
+        display: flex;
+        justify-content: space-between;
+        padding: 10px 0;
+        border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      }
+
+      @media (max-width: 768px) {
+        body {
+          padding: 0;
+          background: white;
+        }
+
+        .container {
+          border-radius: 0;
+          box-shadow: none;
+          min-height: 100vh;
+        }
+
+        .header {
+          padding: 20px 15px;
+          border-radius: 0;
+        }
+
+        .header h1 {
+          font-size: 1.8rem;
+          margin-bottom: 8px;
+        }
+
+        .header p {
+          font-size: 1rem;
+        }
+
+        .calc-row {
+          grid-template-columns: 1fr;
+          gap: 20px;
+        }
+
+        .tabs {
+          flex-wrap: wrap;
+          padding: 0;
+        }
+
+        .tab {
+          flex: 1;
+          min-width: 110px;
+          padding: 12px 8px;
+          font-size: 12px;
+          text-align: center;
+        }
+
+        .calculator-content {
+          padding: 20px 15px;
+        }
+
+        .input-section,
+        .result-section {
+          padding: 20px 15px;
+          border-radius: 10px;
+        }
+
+        .input-section h2 {
+          font-size: 1.3rem !important;
+          margin-bottom: 20px !important;
+        }
+
+        .form-group {
+          margin-bottom: 18px;
+        }
+
+        .form-group label {
+          font-size: 14px;
+          font-weight: 600;
+          margin-bottom: 6px;
+        }
+
+        .form-group input,
+        .form-group select {
+          padding: 14px 12px;
+          font-size: 16px;
+          border-radius: 6px;
+        }
+
+        .calculate-btn {
+          padding: 16px 20px;
+          font-size: 16px;
+          font-weight: 600;
+          border-radius: 6px;
+        }
+
+        .result-item {
+          margin-bottom: 12px;
+          padding-bottom: 12px;
+        }
+
+        .result-label {
+          font-size: 13px;
+          margin-bottom: 4px;
+        }
+
+        .result-value {
+          font-size: 20px;
+          font-weight: 700;
+        }
+
+        .breakdown h3 {
+          font-size: 1.1rem;
+          margin-bottom: 12px;
+        }
+
+        .breakdown-item {
+          padding: 8px 0;
+          font-size: 14px;
+        }
+      }
+
+      .chart-container {
+        margin-top: 30px;
+        background: white;
+        padding: 20px;
+        border-radius: 10px;
+        box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="header">
+        <h1>All-in-One Financial Calculator</h1>
+        <p>
+          Your complete toolkit for financial planning and investment
+          calculations
+        </p>
+      </div>
+
+      <div class="tabs">
+        <button class="tab active" onclick="showCalculator('loan-emi')">
+          Loan EMI
+        </button>
+        <button class="tab" onclick="showCalculator('fd')">
+          Fixed Deposit
+        </button>
+        <button class="tab" onclick="showCalculator('rd')">
+          Recurring Deposit
+        </button>
+        <button class="tab" onclick="showCalculator('inflation')">
+          Inflation
+        </button>
+        <button class="tab" onclick="showCalculator('future-value')">
+          Future Value
+        </button>
+        <button class="tab" onclick="showCalculator('present-value')">
+          Present Value
+        </button>
+        <button class="tab" onclick="showCalculator('simple-interest')">
+          Simple Interest
+        </button>
+        <button class="tab" onclick="showCalculator('compound-interest')">
+          Compound Interest
+        </button>
+        <button class="tab" onclick="showCalculator('sip')">SIP</button>
+        <button class="tab" onclick="showCalculator('swp')">SWP</button>
+        <button class="tab" onclick="showCalculator('lumpsum')">Lumpsum</button>
+        <button class="tab" onclick="showCalculator('cagr')">CAGR</button>
+        <button class="tab" onclick="showCalculator('investment-calculator')">
+          Investment Calculator
+        </button>
+      </div>
+
+      <div class="calculator-content">
+        <!-- Loan EMI Calculator -->
+        <div class="calculator active" id="loan-emi">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Loan EMI Calculator
+              </h2>
+              <div class="form-group">
+                <label>Loan Amount (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="loan-amount"
+                  placeholder="Enter loan amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interest Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="loan-rate"
+                  step="0.1"
+                  placeholder="Enter interest rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Loan Tenure</label>
+                <select id="loan-tenure-type">
+                  <option value="years">Years</option>
+                  <option value="months">Months</option>
+                </select>
+              </div>
+              <div class="form-group">
+                <label>Duration</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="loan-tenure"
+                  placeholder="Enter duration"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateLoanEMI()">
+                Calculate EMI
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Monthly EMI</div>
+                <div class="result-value" id="emi-amount">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Interest</div>
+                <div class="result-value" id="total-interest">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Amount</div>
+                <div class="result-value" id="total-amount">₹0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Inflation Calculator -->
+        <div class="calculator" id="inflation">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Inflation Calculator
+              </h2>
+              <div class="form-group">
+                <label>Current Amount (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="inflation-amount"
+                  placeholder="Enter current amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Inflation Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="inflation-rate"
+                  step="0.1"
+                  placeholder="Enter inflation rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="inflation-years"
+                  placeholder="Enter number of years"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateInflation()">
+                Calculate Impact
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Future Cost</div>
+                <div class="result-value" id="inflation-future-cost">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Increase Amount</div>
+                <div class="result-value" id="inflation-increase">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Purchasing Power</div>
+                <div class="result-value" id="purchasing-power">0%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Future Value Calculator -->
+        <div class="calculator" id="future-value">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Future Value Calculator
+              </h2>
+              <div class="form-group">
+                <label>Present Value (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="fv-present-value"
+                  placeholder="Enter present value"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interest Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="fv-rate"
+                  step="0.1"
+                  placeholder="Enter interest rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="fv-years"
+                  placeholder="Enter number of years"
+                />
+              </div>
+              <div class="form-group">
+                <label>Compounding Frequency</label>
+                <select id="fv-compounding">
+                  <option value="1">Annually</option>
+                  <option value="2">Semi-annually</option>
+                  <option value="4">Quarterly</option>
+                  <option value="12">Monthly</option>
+                  <option value="365">Daily</option>
+                </select>
+              </div>
+              <button class="calculate-btn" onclick="calculateFutureValue()">
+                Calculate Future Value
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Future Value</div>
+                <div class="result-value" id="future-value-result">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Interest Earned</div>
+                <div class="result-value" id="fv-interest-earned">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Growth Multiple</div>
+                <div class="result-value" id="fv-growth-multiple">0x</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Present Value Calculator -->
+        <div class="calculator" id="present-value">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Present Value Calculator
+              </h2>
+              <div class="form-group">
+                <label>Future Value (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="pv-future-value"
+                  placeholder="Enter future value"
+                />
+              </div>
+              <div class="form-group">
+                <label>Discount Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="pv-rate"
+                  step="0.1"
+                  placeholder="Enter discount rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="pv-years"
+                  placeholder="Enter number of years"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculatePresentValue()">
+                Calculate Present Value
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Present Value</div>
+                <div class="result-value" id="present-value-result">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Discount Amount</div>
+                <div class="result-value" id="pv-discount">₹0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SIP Calculator -->
+        <div class="calculator" id="sip">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                SIP Calculator
+              </h2>
+              <div class="form-group">
+                <label>Monthly Investment (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="sip-amount"
+                  placeholder="Enter monthly SIP amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Expected Annual Return (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="sip-rate"
+                  step="0.1"
+                  placeholder="Enter expected return rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Investment Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="sip-years"
+                  placeholder="Enter investment period"
+                />
+              </div>
+              <div class="form-group">
+                <label>Step-up Rate (% per annum)</label>
+                <select id="sip-stepup-type">
+                  <option value="none">No Step-up</option>
+                  <option value="fixed">Fixed Percentage</option>
+                </select>
+              </div>
+              <div
+                class="form-group"
+                id="sip-stepup-group"
+                style="display: none"
+              >
+                <label>Step-up Percentage (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="sip-stepup"
+                  placeholder="Enter step-up percentage"
+                  step="0.1"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateSIP()">
+                Calculate SIP Returns
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Maturity Amount</div>
+                <div class="result-value" id="sip-maturity">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Investment</div>
+                <div class="result-value" id="sip-invested">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Returns</div>
+                <div class="result-value" id="sip-returns">₹0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- SWP Calculator -->
+        <div class="calculator" id="swp">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                SWP Calculator
+              </h2>
+              <div class="form-group">
+                <label>Initial Investment (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="swp-initial"
+                  placeholder="Enter initial investment"
+                />
+              </div>
+              <div class="form-group">
+                <label>Monthly Withdrawal (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="swp-withdrawal"
+                  placeholder="Enter monthly withdrawal"
+                />
+              </div>
+              <div class="form-group">
+                <label>Expected Annual Return (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="swp-rate"
+                  step="0.1"
+                  placeholder="Enter expected return rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Withdrawal Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="swp-years"
+                  placeholder="Enter withdrawal period"
+                />
+              </div>
+              <div class="form-group">
+                <label>Step-up Rate (% per annum)</label>
+                <select id="swp-stepup-type">
+                  <option value="none">No Step-up</option>
+                  <option value="fixed">Fixed Percentage</option>
+                </select>
+              </div>
+              <div
+                class="form-group"
+                id="swp-stepup-group"
+                style="display: none"
+              >
+                <label>Step-up Percentage (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="swp-stepup"
+                  placeholder="Enter step-up percentage"
+                  step="0.1"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateSWP()">
+                Calculate SWP
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Remaining Balance</div>
+                <div class="result-value" id="swp-balance">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Withdrawn</div>
+                <div class="result-value" id="swp-total-withdrawn">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Sustainability</div>
+                <div class="result-value" id="swp-sustainability">0 Years</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Lumpsum Calculator -->
+        <div class="calculator" id="lumpsum">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Lumpsum Calculator
+              </h2>
+              <div class="form-group">
+                <label>Investment Amount (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="lumpsum-amount"
+                  placeholder="Enter lumpsum amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Expected Annual Return (%)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="lumpsum-rate"
+                  step="0.1"
+                  placeholder="Enter expected return rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Investment Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="lumpsum-years"
+                  placeholder="Enter investment period"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateLumpsum()">
+                Calculate Returns
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Maturity Value</div>
+                <div class="result-value" id="lumpsum-maturity">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Returns</div>
+                <div class="result-value" id="lumpsum-returns">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Return Multiple</div>
+                <div class="result-value" id="lumpsum-multiple">0x</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Fixed Deposit Calculator -->
+        <div class="calculator" id="fd">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Fixed Deposit Calculator
+              </h2>
+              <div class="form-group">
+                <label>Principal Amount (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="fd-principal"
+                  placeholder="Enter principal amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interest Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="fd-rate"
+                  step="0.1"
+                  placeholder="Enter interest rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="fd-years"
+                  placeholder="Enter time period"
+                />
+              </div>
+              <div class="form-group">
+                <label>Compounding Frequency</label>
+                <select id="fd-compounding">
+                  <option value="4">Quarterly</option>
+                  <option value="2">Half-yearly</option>
+                  <option value="1">Yearly</option>
+                  <option value="12">Monthly</option>
+                </select>
+              </div>
+              <button class="calculate-btn" onclick="calculateFD()">
+                Calculate FD Returns
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Maturity Amount</div>
+                <div class="result-value" id="fd-maturity">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Interest Earned</div>
+                <div class="result-value" id="fd-interest">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Effective Yield</div>
+                <div class="result-value" id="fd-yield">0%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Recurring Deposit Calculator -->
+        <div class="calculator" id="rd">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Recurring Deposit Calculator
+              </h2>
+              <div class="form-group">
+                <label>Monthly Deposit (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="rd-monthly"
+                  placeholder="Enter monthly deposit"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interest Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="rd-rate"
+                  step="0.1"
+                  placeholder="Enter interest rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="rd-years"
+                  placeholder="Enter time period"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateRD()">
+                Calculate RD Returns
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Maturity Amount</div>
+                <div class="result-value" id="rd-maturity">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Deposits</div>
+                <div class="result-value" id="rd-deposits">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Interest Earned</div>
+                <div class="result-value" id="rd-interest">₹0</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- CAGR Calculator -->
+        <div class="calculator" id="cagr">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                CAGR Calculator
+              </h2>
+              <div class="form-group">
+                <label>Initial Investment (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="cagr-initial"
+                  placeholder="Enter initial investment"
+                />
+              </div>
+              <div class="form-group">
+                <label>Final Value (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="cagr-final"
+                  placeholder="Enter final value"
+                />
+              </div>
+              <div class="form-group">
+                <label>Investment Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="cagr-years"
+                  placeholder="Enter investment period"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateCAGR()">
+                Calculate CAGR
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">CAGR</div>
+                <div class="result-value" id="cagr-rate">0%</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Returns</div>
+                <div class="result-value" id="cagr-returns">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Return Multiple</div>
+                <div class="result-value" id="cagr-multiple">0x</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Simple Interest Calculator -->
+        <div class="calculator" id="simple-interest">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Simple Interest Calculator
+              </h2>
+              <div class="form-group">
+                <label>Principal Amount (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="si-principal"
+                  placeholder="Enter principal amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interest Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="si-rate"
+                  step="0.1"
+                  placeholder="Enter interest rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="si-years"
+                  placeholder="Enter time period"
+                />
+              </div>
+              <button class="calculate-btn" onclick="calculateSimpleInterest()">
+                Calculate Simple Interest
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Simple Interest</div>
+                <div class="result-value" id="si-interest">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Final Amount</div>
+                <div class="result-value" id="si-final">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Total Return Rate</div>
+                <div class="result-value" id="si-total-rate">0%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Compound Interest Calculator -->
+        <div class="calculator" id="compound-interest">
+          <div class="calc-row">
+            <div class="input-section">
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Compound Interest Calculator
+              </h2>
+              <div class="form-group">
+                <label>Principal Amount (₹)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="ci-principal"
+                  placeholder="Enter principal amount"
+                />
+              </div>
+              <div class="form-group">
+                <label>Interest Rate (% per annum)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="ci-rate"
+                  step="0.1"
+                  placeholder="Enter interest rate"
+                />
+              </div>
+              <div class="form-group">
+                <label>Time Period (Years)</label>
+                <input
+                  type="number"
+                  min="0"
+                  id="ci-years"
+                  placeholder="Enter time period"
+                />
+              </div>
+              <div class="form-group">
+                <label>Compounding Frequency</label>
+                <select id="ci-frequency">
+                  <option value="365">Daily</option>
+                  <option value="12">Monthly</option>
+                  <option value="4">Quarterly</option>
+                  <option value="2">Half-yearly</option>
+                  <option value="1">Yearly</option>
+                </select>
+              </div>
+              <button
+                class="calculate-btn"
+                onclick="calculateCompoundInterest()"
+              >
+                Calculate Compound Interest
+              </button>
+            </div>
+            <div class="result-section">
+              <div class="result-item">
+                <div class="result-label">Compound Interest</div>
+                <div class="result-value" id="ci-interest">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Final Amount</div>
+                <div class="result-value" id="ci-final">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Effective Annual Rate</div>
+                <div class="result-value" id="ci-effective-rate">0%</div>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Investment Calculator External Link -->
+        <div class="calculator" id="investment-calculator">
+          <div class="calc-row">
+            <div
+              class="input-section"
+              style="
+                grid-column: 1 / -1;
+                max-width: 600px;
+                margin: 0 auto;
+                text-align: center;
+              "
+            >
+              <h2 style="margin-bottom: 25px; color: #495057">
+                Advanced Investment Calculator
+              </h2>
+              <div
+                style="
+                  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                  color: white;
+                  padding: 30px;
+                  border-radius: 15px;
+                  margin-bottom: 20px;
+                "
+              >
+                <p
+                  style="
+                    font-size: 1.1rem;
+                    line-height: 1.6;
+                    opacity: 0.9;
+                    margin-bottom: 20px;
+                  "
+                >
+                  For comprehensive investment planning with advanced features
+                  like goal-based withdrawals, complex SIP scenarios, and
+                  detailed portfolio analysis.
+                </p>
+                <div
+                  style="
+                    background: rgba(255, 255, 255, 0.1);
+                    padding: 15px;
+                    border-radius: 10px;
+                    margin-bottom: 20px;
+                  "
+                >
+                  <div
+                    style="
+                      display: grid;
+                      grid-template-columns: repeat(2, 1fr);
+                      gap: 10px;
+                      text-align: left;
+                    "
+                  >
+                    <div>✓ Goal-based planning</div>
+                    <div>✓ Year-by-year analysis</div>
+                    <div>✓ Multiple withdrawals</div>
+                    <div>✓ Inflation adjustments</div>
+                    <div>✓ Complex SIP scenarios</div>
+                    <div>✓ Portfolio tracking</div>
+                  </div>
+                </div>
+                <a
+                  href="https://compound-interest-investment-calculator.github.io/"
+                  target="_blank"
+                  class="calculate-btn"
+                  style="
+                    background: white;
+                    color: #667eea;
+                    border: none;
+                    text-decoration: none;
+                    display: inline-block;
+                  "
+                >
+                  Open Advanced Calculator →
+                </a>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script>
+      function showCalculator(calculatorId) {
+        // Hide all calculators
+        const calculators = document.querySelectorAll(".calculator");
+        calculators.forEach((calc) => calc.classList.remove("active"));
+
+        // Show selected calculator
+        document.getElementById(calculatorId).classList.add("active");
+
+        // Update active tab
+        const tabs = document.querySelectorAll(".tab");
+        tabs.forEach((tab) => tab.classList.remove("active"));
+        event.target.classList.add("active");
+      }
+
+      function formatCurrency(amount) {
+        return new Intl.NumberFormat("en-IN", {
+          style: "currency",
+          currency: "INR",
+          maximumFractionDigits: 0,
+        }).format(amount);
+      }
+
+      function calculateLoanEMI() {
+        const principal = parseFloat(
+          document.getElementById("loan-amount").value
+        );
+        const annualRate = parseFloat(
+          document.getElementById("loan-rate").value
+        );
+        const tenureType = document.getElementById("loan-tenure-type").value;
+        const tenure = parseFloat(document.getElementById("loan-tenure").value);
+
+        if (!principal || !annualRate || !tenure) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const monthlyRate = annualRate / 12 / 100;
+        const totalMonths = tenureType === "years" ? tenure * 12 : tenure;
+
+        const emi =
+          (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
+          (Math.pow(1 + monthlyRate, totalMonths) - 1);
+
+        const totalAmount = emi * totalMonths;
+        const totalInterest = totalAmount - principal;
+
+        document.getElementById("emi-amount").textContent = formatCurrency(emi);
+        document.getElementById("total-interest").textContent =
+          formatCurrency(totalInterest);
+        document.getElementById("total-amount").textContent =
+          formatCurrency(totalAmount);
+      }
+
+      function calculateInflation() {
+        const amount = parseFloat(
+          document.getElementById("inflation-amount").value
+        );
+        const rate = parseFloat(
+          document.getElementById("inflation-rate").value
+        );
+        const years = parseFloat(
+          document.getElementById("inflation-years").value
+        );
+
+        if (!amount || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const futureCost = amount * Math.pow(1 + rate / 100, years);
+        const increase = futureCost - amount;
+        const purchasingPower = (amount / futureCost) * 100;
+
+        document.getElementById("inflation-future-cost").textContent =
+          formatCurrency(futureCost);
+        document.getElementById("inflation-increase").textContent =
+          formatCurrency(increase);
+        document.getElementById("purchasing-power").textContent =
+          purchasingPower.toFixed(1) + "%";
+      }
+
+      function calculateFutureValue() {
+        const presentValue = parseFloat(
+          document.getElementById("fv-present-value").value
+        );
+        const rate = parseFloat(document.getElementById("fv-rate").value);
+        const years = parseFloat(document.getElementById("fv-years").value);
+        const compounding = parseInt(
+          document.getElementById("fv-compounding").value
+        );
+
+        if (!presentValue || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const futureValue =
+          presentValue *
+          Math.pow(1 + rate / 100 / compounding, compounding * years);
+        const interestEarned = futureValue - presentValue;
+        const growthMultiple = futureValue / presentValue;
+
+        document.getElementById("future-value-result").textContent =
+          formatCurrency(futureValue);
+        document.getElementById("fv-interest-earned").textContent =
+          formatCurrency(interestEarned);
+        document.getElementById("fv-growth-multiple").textContent =
+          growthMultiple.toFixed(2) + "x";
+      }
+
+      function calculatePresentValue() {
+        const futureValue = parseFloat(
+          document.getElementById("pv-future-value").value
+        );
+        const rate = parseFloat(document.getElementById("pv-rate").value);
+        const years = parseFloat(document.getElementById("pv-years").value);
+
+        if (!futureValue || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const presentValue = futureValue / Math.pow(1 + rate / 100, years);
+        const discount = futureValue - presentValue;
+
+        document.getElementById("present-value-result").textContent =
+          formatCurrency(presentValue);
+        document.getElementById("pv-discount").textContent =
+          formatCurrency(discount);
+      }
+
+      function calculateSIP() {
+        const monthlyAmount = parseFloat(
+          document.getElementById("sip-amount").value
+        );
+        const annualRate = parseFloat(
+          document.getElementById("sip-rate").value
+        );
+        const years = parseFloat(document.getElementById("sip-years").value);
+        const stepupType = document.getElementById("sip-stepup-type").value;
+        const stepupRate =
+          parseFloat(document.getElementById("sip-stepup").value) || 0;
+
+        if (!monthlyAmount || !annualRate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const monthlyRate = annualRate / 12 / 100;
+        const totalMonths = years * 12;
+        let maturityAmount = 0;
+        let totalInvestment = 0;
+        let currentSIP = monthlyAmount;
+
+        if (stepupType === "none") {
+          // Regular SIP calculation
+          maturityAmount =
+            monthlyAmount *
+            ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate) *
+            (1 + monthlyRate);
+          totalInvestment = monthlyAmount * totalMonths;
+        } else {
+          // Step-up SIP calculation
+          const monthlyStepup = stepupRate / 12 / 100;
+          for (let month = 1; month <= totalMonths; month++) {
+            if (month > 1 && (month - 1) % 12 === 0) {
+              // Increase SIP amount annually
+              currentSIP = currentSIP * (1 + stepupRate / 100);
+            }
+
+            const remainingMonths = totalMonths - month + 1;
+            maturityAmount +=
+              currentSIP * Math.pow(1 + monthlyRate, remainingMonths);
+            totalInvestment += currentSIP;
+          }
+        }
+
+        const totalReturns = maturityAmount - totalInvestment;
+
+        document.getElementById("sip-maturity").textContent =
+          formatCurrency(maturityAmount);
+        document.getElementById("sip-invested").textContent =
+          formatCurrency(totalInvestment);
+        document.getElementById("sip-returns").textContent =
+          formatCurrency(totalReturns);
+      }
+
+      function calculateSWP() {
+        const initialAmount = parseFloat(
+          document.getElementById("swp-initial").value
+        );
+        const monthlyWithdrawal = parseFloat(
+          document.getElementById("swp-withdrawal").value
+        );
+        const annualRate = parseFloat(
+          document.getElementById("swp-rate").value
+        );
+        const years = parseFloat(document.getElementById("swp-years").value);
+        const stepupType = document.getElementById("swp-stepup-type").value;
+        const stepupRate =
+          parseFloat(document.getElementById("swp-stepup").value) || 0;
+
+        if (!initialAmount || !monthlyWithdrawal || !annualRate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const monthlyRate = annualRate / 12 / 100;
+        const totalMonths = years * 12;
+        let balance = initialAmount;
+        let totalWithdrawn = 0;
+        let currentWithdrawal = monthlyWithdrawal;
+
+        for (let month = 1; month <= totalMonths; month++) {
+          if (stepupType !== "none" && month > 1 && (month - 1) % 12 === 0) {
+            // Increase withdrawal amount annually
+            currentWithdrawal = currentWithdrawal * (1 + stepupRate / 100);
+          }
+
+          balance = balance * (1 + monthlyRate) - currentWithdrawal;
+          totalWithdrawn += currentWithdrawal;
+
+          if (balance <= 0) {
+            balance = 0;
+            break;
+          }
+        }
+
+        // Calculate sustainability (how long money will last)
+        let tempBalance = initialAmount;
+        let months = 0;
+        let tempWithdrawal = monthlyWithdrawal;
+
+        while (tempBalance > tempWithdrawal && months < 1200) {
+          // Max 100 years
+          if (stepupType !== "none" && months > 0 && months % 12 === 0) {
+            tempWithdrawal = tempWithdrawal * (1 + stepupRate / 100);
+          }
+          tempBalance = tempBalance * (1 + monthlyRate) - tempWithdrawal;
+          months++;
+        }
+
+        document.getElementById("swp-balance").textContent = formatCurrency(
+          Math.max(0, balance)
+        );
+        document.getElementById("swp-total-withdrawn").textContent =
+          formatCurrency(totalWithdrawn);
+        document.getElementById("swp-sustainability").textContent =
+          (months / 12).toFixed(0) + " Years";
+      }
+
+      function calculateLumpsum() {
+        const amount = parseFloat(
+          document.getElementById("lumpsum-amount").value
+        );
+        const rate = parseFloat(document.getElementById("lumpsum-rate").value);
+        const years = parseFloat(
+          document.getElementById("lumpsum-years").value
+        );
+
+        if (!amount || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const maturityValue = amount * Math.pow(1 + rate / 100, years);
+        const returns = maturityValue - amount;
+        const multiple = maturityValue / amount;
+
+        document.getElementById("lumpsum-maturity").textContent =
+          formatCurrency(maturityValue);
+        document.getElementById("lumpsum-returns").textContent =
+          formatCurrency(returns);
+        document.getElementById("lumpsum-multiple").textContent =
+          multiple.toFixed(2) + "x";
+      }
+
+      function calculateFD() {
+        const principal = parseFloat(
+          document.getElementById("fd-principal").value
+        );
+        const rate = parseFloat(document.getElementById("fd-rate").value);
+        const years = parseFloat(document.getElementById("fd-years").value);
+        const compounding = parseInt(
+          document.getElementById("fd-compounding").value
+        );
+
+        if (!principal || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const maturityAmount =
+          principal *
+          Math.pow(1 + rate / 100 / compounding, compounding * years);
+        const interest = maturityAmount - principal;
+        const effectiveYield = ((maturityAmount / principal - 1) / years) * 100;
+
+        document.getElementById("fd-maturity").textContent =
+          formatCurrency(maturityAmount);
+        document.getElementById("fd-interest").textContent =
+          formatCurrency(interest);
+        document.getElementById("fd-yield").textContent =
+          effectiveYield.toFixed(2) + "%";
+      }
+
+      function calculateRD() {
+        const monthlyDeposit = parseFloat(
+          document.getElementById("rd-monthly").value
+        );
+        const annualRate = parseFloat(document.getElementById("rd-rate").value);
+        const years = parseFloat(document.getElementById("rd-years").value);
+
+        if (!monthlyDeposit || !annualRate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const monthlyRate = annualRate / 12 / 100;
+        const totalMonths = years * 12;
+
+        // RD formula: M = P * [((1 + r)^n - 1) / r] * (1 + r)
+        const maturityAmount =
+          monthlyDeposit *
+          ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate) *
+          (1 + monthlyRate);
+        const totalDeposits = monthlyDeposit * totalMonths;
+        const interest = maturityAmount - totalDeposits;
+
+        document.getElementById("rd-maturity").textContent =
+          formatCurrency(maturityAmount);
+        document.getElementById("rd-deposits").textContent =
+          formatCurrency(totalDeposits);
+        document.getElementById("rd-interest").textContent =
+          formatCurrency(interest);
+      }
+
+      function calculateCAGR() {
+        const initialValue = parseFloat(
+          document.getElementById("cagr-initial").value
+        );
+        const finalValue = parseFloat(
+          document.getElementById("cagr-final").value
+        );
+        const years = parseFloat(document.getElementById("cagr-years").value);
+
+        if (!initialValue || !finalValue || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const cagr = (Math.pow(finalValue / initialValue, 1 / years) - 1) * 100;
+        const returns = finalValue - initialValue;
+        const multiple = finalValue / initialValue;
+
+        document.getElementById("cagr-rate").textContent =
+          cagr.toFixed(2) + "%";
+        document.getElementById("cagr-returns").textContent =
+          formatCurrency(returns);
+        document.getElementById("cagr-multiple").textContent =
+          multiple.toFixed(2) + "x";
+      }
+
+      function calculateSimpleInterest() {
+        const principal = parseFloat(
+          document.getElementById("si-principal").value
+        );
+        const rate = parseFloat(document.getElementById("si-rate").value);
+        const years = parseFloat(document.getElementById("si-years").value);
+
+        if (!principal || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const simpleInterest = (principal * rate * years) / 100;
+        const finalAmount = principal + simpleInterest;
+        const totalReturnRate = (simpleInterest / principal) * 100;
+
+        document.getElementById("si-interest").textContent =
+          formatCurrency(simpleInterest);
+        document.getElementById("si-final").textContent =
+          formatCurrency(finalAmount);
+        document.getElementById("si-total-rate").textContent =
+          totalReturnRate.toFixed(2) + "%";
+      }
+
+      function calculateCompoundInterest() {
+        const principal = parseFloat(
+          document.getElementById("ci-principal").value
+        );
+        const rate = parseFloat(document.getElementById("ci-rate").value);
+        const years = parseFloat(document.getElementById("ci-years").value);
+        const frequency = parseInt(
+          document.getElementById("ci-frequency").value
+        );
+
+        if (!principal || !rate || !years) {
+          alert("Please fill all fields");
+          return;
+        }
+
+        const finalAmount =
+          principal * Math.pow(1 + rate / 100 / frequency, frequency * years);
+        const compoundInterest = finalAmount - principal;
+        const effectiveRate =
+          Math.pow(1 + rate / 100 / frequency, frequency) - 1;
+
+        document.getElementById("ci-interest").textContent =
+          formatCurrency(compoundInterest);
+        document.getElementById("ci-final").textContent =
+          formatCurrency(finalAmount);
+        document.getElementById("ci-effective-rate").textContent =
+          (effectiveRate * 100).toFixed(2) + "%";
+      }
+
+      // Initialize with default calculator
+      document.addEventListener("DOMContentLoaded", function () {
+        // Add event listeners for step-up dropdowns
+        document
+          .getElementById("sip-stepup-type")
+          .addEventListener("change", function () {
+            const stepupGroup = document.getElementById("sip-stepup-group");
+            if (this.value === "fixed") {
+              stepupGroup.style.display = "block";
+            } else {
+              stepupGroup.style.display = "none";
+            }
+          });
+
+        document
+          .getElementById("swp-stepup-type")
+          .addEventListener("change", function () {
+            const stepupGroup = document.getElementById("swp-stepup-group");
+            if (this.value === "fixed") {
+              stepupGroup.style.display = "block";
+            } else {
+              stepupGroup.style.display = "none";
+            }
+          });
+      });
+    </script>
+  </body>
+</html>
