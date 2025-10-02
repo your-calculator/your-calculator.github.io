@@ -132,10 +132,6 @@
         transition: border-color 0.3s ease;
       }
 
-      .form-group input[type="number"] {
-        min: 0;
-      }
-
       .form-group input:focus,
       .form-group select:focus {
         outline: none;
@@ -368,6 +364,17 @@
                 Loan EMI Calculator
               </h2>
               <div class="form-group">
+                <label>Loan Type</label>
+                <select id="loan-type">
+                  <option value="regular">
+                    Regular EMI Loan (Personal/Home/Vehicle Loan)
+                  </option>
+                  <option value="interest-only">
+                    Interest-Only Loan (Gold Loan/LAS)
+                  </option>
+                </select>
+              </div>
+              <div class="form-group">
                 <label>Loan Amount (₹)</label>
                 <input
                   type="number"
@@ -407,9 +414,19 @@
               </button>
             </div>
             <div class="result-section">
-              <div class="result-item">
-                <div class="result-label">Monthly EMI</div>
+              <div class="result-item" id="monthly-payment-item">
+                <div class="result-label" id="monthly-payment-label">
+                  Monthly EMI
+                </div>
                 <div class="result-value" id="emi-amount">₹0</div>
+              </div>
+              <div
+                class="result-item"
+                id="principal-payment-item"
+                style="display: none"
+              >
+                <div class="result-label">Principal Payment at End</div>
+                <div class="result-value" id="principal-payment">₹0</div>
               </div>
               <div class="result-item">
                 <div class="result-label">Total Interest</div>
@@ -418,6 +435,10 @@
               <div class="result-item">
                 <div class="result-label">Total Amount</div>
                 <div class="result-value" id="total-amount">₹0</div>
+              </div>
+              <div class="result-item">
+                <div class="result-label">Interest to Principal</div>
+                <div class="result-value" id="interest-principal-ratio">0%</div>
               </div>
             </div>
           </div>
@@ -1222,6 +1243,7 @@
       }
 
       function calculateLoanEMI() {
+        const loanType = document.getElementById("loan-type").value;
         const principal = parseFloat(
           document.getElementById("loan-amount").value
         );
@@ -1239,18 +1261,50 @@
         const monthlyRate = annualRate / 12 / 100;
         const totalMonths = tenureType === "years" ? tenure * 12 : tenure;
 
-        const emi =
-          (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
-          (Math.pow(1 + monthlyRate, totalMonths) - 1);
+        if (loanType === "regular") {
+          // Regular EMI calculation
+          const emi =
+            (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
+            (Math.pow(1 + monthlyRate, totalMonths) - 1);
 
-        const totalAmount = emi * totalMonths;
-        const totalInterest = totalAmount - principal;
+          const totalAmount = emi * totalMonths;
+          const totalInterest = totalAmount - principal;
+          const interestRatio = (totalInterest / principal) * 100;
 
-        document.getElementById("emi-amount").textContent = formatCurrency(emi);
-        document.getElementById("total-interest").textContent =
-          formatCurrency(totalInterest);
-        document.getElementById("total-amount").textContent =
-          formatCurrency(totalAmount);
+          document.getElementById("monthly-payment-label").textContent =
+            "Monthly EMI";
+          document.getElementById("emi-amount").textContent =
+            formatCurrency(emi);
+          document.getElementById("principal-payment-item").style.display =
+            "none";
+          document.getElementById("total-interest").textContent =
+            formatCurrency(totalInterest);
+          document.getElementById("total-amount").textContent =
+            formatCurrency(totalAmount);
+          document.getElementById("interest-principal-ratio").textContent =
+            interestRatio.toFixed(1) + "%";
+        } else {
+          // Interest-only loan (Gold Loan/LAS)
+          const monthlyInterest = principal * monthlyRate;
+          const totalInterest = monthlyInterest * totalMonths;
+          const totalAmount = principal + totalInterest;
+          const interestRatio = (totalInterest / principal) * 100;
+
+          document.getElementById("monthly-payment-label").textContent =
+            "Monthly Interest Payment";
+          document.getElementById("emi-amount").textContent =
+            formatCurrency(monthlyInterest);
+          document.getElementById("principal-payment-item").style.display =
+            "block";
+          document.getElementById("principal-payment").textContent =
+            formatCurrency(principal);
+          document.getElementById("total-interest").textContent =
+            formatCurrency(totalInterest);
+          document.getElementById("total-amount").textContent =
+            formatCurrency(totalAmount);
+          document.getElementById("interest-principal-ratio").textContent =
+            interestRatio.toFixed(1) + "%";
+        }
       }
 
       function calculateInflation() {
@@ -1363,7 +1417,6 @@
           totalInvestment = monthlyAmount * totalMonths;
         } else {
           // Step-up SIP calculation
-          const monthlyStepup = stepupRate / 12 / 100;
           for (let month = 1; month <= totalMonths; month++) {
             if (month > 1 && (month - 1) % 12 === 0) {
               // Increase SIP amount annually
