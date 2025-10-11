@@ -2018,12 +2018,12 @@
         showToast("Calculations Done. Enjoy!", "success");
       }
 
-      const ICONS = {
-        success: "✔",
-        error: "✖",
-        warning: "⚠",
-        info: "ⓘ",
-      };
+const ICONS = {
+  success: "✅",
+  error: "❌",
+  warning: "⚠️",
+  info: "ℹ️",
+};
 
       // === Toast utility ===
       function getToastContainer() {
@@ -2054,7 +2054,7 @@
         setTimeout(() => {
           toast.classList.remove("show");
           setTimeout(() => toast.remove(), 300);
-        }, 3000);
+        }, 1000);
       }
 
       function showCustomDialog(message, type = "info") {
