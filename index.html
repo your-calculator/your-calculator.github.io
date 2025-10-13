@@ -3,554 +3,45 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>Financial Calculator</title>
+    <title>Financial Calculator by Pabitra</title>
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="32x32"
+      href="icons/favicon-32.png"
+    />
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="16x16"
+      href="icons/favicon-16.png"
+    />
+
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
       rel="stylesheet"
     />
-    <style>
-      :root {
-        --primary: #101010;
-        --primary-hover: #222222;
-        --primary-light: #eef5ff;
-        --text-dark: #1a1a1a;
-        --text-medium: #4a5568;
-        --text-light: #6b7280;
-        --border: #e2e8f0;
-        --bg: #f8fafc;
-        --sidebar-width: 280px;
-      }
-
-      * {
-        box-sizing: border-box;
-        margin: 0;
-        padding: 0;
-      }
-
-      body {
-        font-family: "Inter", sans-serif;
-        /* background: var(--bg); */
-        background: white;
-        color: var(--text-dark);
-        line-height: 1.6;
-      }
-
-      /* Layout */
-      .app-container {
-        display: flex;
-        min-height: 100vh;
-      }
-
-      /* Sidebar */
-      .sidebar {
-        width: var(--sidebar-width);
-        background: white;
-        border-right: 1px solid var(--border);
-        position: fixed;
-        left: 0;
-        top: 0;
-        bottom: 0;
-        overflow-y: auto;
-        z-index: 1000;
-        transition: transform 0.3s ease;
-      }
-
-      .sidebar-header {
-        padding: 1rem 1.25rem;
-        border-bottom: 1px solid var(--border);
-      }
-
-      .sidebar-header h1 {
-        font-size: 1.25rem;
-        font-weight: 600;
-        color: var(--primary);
-        margin-bottom: 0.25rem;
-      }
-
-      .sidebar-header p {
-        font-size: 0.8rem;
-        color: var(--text-light);
-      }
-
-      /* .sidebar-nav {
-        padding: 1rem 0;
-      } */
-
-      .nav-item {
-        display: block;
-        padding: 0.75rem 1.25rem;
-        color: var(--text-medium);
-        text-decoration: none;
-        font-size: 0.9rem;
-        font-weight: 500;
-        border-left: 3px solid transparent;
-        transition: all 0.2s ease;
-        cursor: pointer;
-        background: none;
-        border-right: none;
-        border-top: none;
-        border-bottom: none;
-        width: 100%;
-        text-align: left;
-      }
-
-      .nav-item:hover {
-        background: var(--primary-light);
-        color: var(--primary);
-        border-left-color: var(--primary);
-      }
-
-      .nav-item.active {
-        background: var(--primary-light);
-        color: var(--primary);
-        border-left-color: var(--primary);
-        font-weight: 600;
-      }
-
-      /* Mobile menu toggle */
-      .menu-toggle {
-        display: none;
-        position: fixed;
-        top: 1rem;
-        left: 1rem;
-        z-index: 1001;
-        background: var(--primary);
-        color: white;
-        border: none;
-        width: 48px;
-        height: 48px;
-        border-radius: 12px;
-        cursor: pointer;
-        box-shadow: 0 4px 12px rgba(11, 99, 255, 0.3);
-      }
-
-      .menu-toggle svg {
-        width: 24px;
-        height: 24px;
-      }
-
-      /* Mobile header */
-      .mobile-header {
-        display: none;
-        position: fixed;
-        top: 0;
-        left: 0;
-        right: 0;
-        background: white;
-        border-bottom: 1px solid var(--border);
-        padding: 1rem;
-        z-index: 1001;
-        align-items: center;
-        gap: 1rem;
-      }
-
-      .mobile-header button {
-        background: var(--primary);
-        color: white;
-        border: none;
-        width: 44px;
-        height: 44px;
-        border-radius: 10px;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        flex-shrink: 0;
-      }
-
-      .mobile-header svg {
-        width: 24px;
-        height: 24px;
-      }
-
-      .mobile-header-content {
-        flex: 1;
-        min-width: 0;
-      }
-
-      .mobile-header-content h1 {
-        font-size: 1rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin: 0;
-        white-space: nowrap;
-        overflow: hidden;
-        text-overflow: ellipsis;
-      }
-
-      /* Overlay */
-      .overlay {
-        display: none;
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        z-index: 999;
-      }
-
-      .overlay.active {
-        display: block;
-      }
-
-      /* Main content */
-      .main-content {
-        flex: 1;
-        margin-left: var(--sidebar-width);
-        padding: 2rem;
-        max-width: 1200px;
-      }
-
-      .content-header {
-        margin-bottom: 2rem;
-      }
-
-      .content-header h2 {
-        font-size: 1.75rem;
-        font-weight: 600;
-        color: var(--text-dark);
-        margin-bottom: 0.5rem;
-      }
-
-      .content-header p {
-        color: var(--text-light);
-        font-size: 0.95rem;
-      }
-
-      /* Calculator sections */
-      .calculator {
-        display: none;
-      }
-
-      .calculator.active {
-        display: block;
-      }
-
-      .card {
-        background: white;
-        border-radius: 16px;
-        border: 1px solid var(--border);
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        padding: 2rem;
-        margin-bottom: 1.5rem;
-      }
-
-      .form-group {
-        margin-bottom: 1.5rem;
-      }
-
-      .form-row {
-        display: grid;
-        grid-template-columns: 1fr 1fr;
-        gap: 1rem;
-        margin-bottom: 1.5rem;
-      }
-
-      label {
-        display: block;
-        margin-bottom: 0.5rem;
-        font-weight: 500;
-        color: var(--text-dark);
-        font-size: 0.9rem;
-      }
-
-      input,
-      select {
-        width: 100%;
-        padding: 0.75rem 1rem;
-        border-radius: 10px;
-        border: 1px solid var(--border);
-        font-size: 0.95rem;
-        transition: all 0.2s;
-        background: white;
-      }
-
-      input:focus,
-      select:focus {
-        outline: none;
-        border-color: var(--primary);
-        box-shadow: 0 0 0 3px var(--primary-light);
-      }
-
-      .calculate-btn {
-        width: 100%;
-        background: var(--primary);
-        color: white;
-        border: none;
-        padding: 1rem;
-        border-radius: 10px;
-        font-size: 1rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: background-color 0.2s ease, transform 0.1s ease;
-      }
-
-      .calculate-btn:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-
-      .result-section {
-        display: grid;
-        gap: 0.75rem;
-        margin-top: 1.5rem;
-      }
-
-      .result-item {
-        background: var(--primary-light);
-        padding: 1rem 1.25rem;
-        border-radius: 12px;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-      }
-
-      .result-item.hide {
-        display: none;
-      }
-
-      .result-label {
-        color: var(--text-medium);
-        font-size: 0.9rem;
-        font-weight: 500;
-      }
-
-      .result-value {
-        font-size: 1.25rem;
-        font-weight: 700;
-        color: var(--primary);
-      }
-
-      .small-text {
-        font-size: 0.85rem;
-        color: var(--text-light);
-        margin-bottom: 1rem;
-      }
-
-      .link-card {
-        background: linear-gradient(135deg, var(--primary-light), #ffffff);
-        padding: 1.5rem;
-        border-radius: 12px;
-        margin-top: 1rem;
-      }
-
-      .link-card p {
-        color: var(--text-medium);
-        margin-bottom: 1rem;
-        line-height: 1.6;
-      }
-
-      .link-card a {
-        display: inline-block;
-        background: var(--primary);
-        color: white;
-        padding: 0.75rem 1.5rem;
-        border-radius: 10px;
-        text-decoration: none;
-        font-weight: 600;
-        transition: background-color 0.2s ease, transform 0.1s ease;
-      }
-
-      .link-card a:hover {
-        background: var(--primary-hover);
-        transform: translateY(-1px);
-      }
-
-      .features {
-        max-width: 500px; /* optional */
-        padding-bottom: 20px;
-      }
-
-      .features strong {
-        display: block;
-        margin-bottom: 8px;
-        font-weight: 600;
-      }
-
-      .features-grid {
-        display: grid;
-        grid-template-columns: repeat(2, 0.4fr);
-        gap: 6px 0px;
-      }
-
-      .features-grid > div {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-        font-size: 0.95rem;
-      }
-
-      /* Toast container to hold multiple stacked toasts */
-      .toast-container {
-        position: fixed;
-        bottom: 20px;
-        right: 20px;
-        display: flex;
-        flex-direction: column;
-        gap: 10px; /* space between toasts */
-        z-index: 1000;
-      }
-
-      .toast {
-        background: #333;
-        color: #fff;
-        padding: 10px 16px;
-        border-radius: 6px;
-        opacity: 0;
-        transform: translateY(20px);
-        transition: all 0.3s ease;
-        font-size: 14px;
-        box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-        min-width: 200px;
-      }
-      .toast.show {
-        opacity: 1;
-        transform: translateY(0);
-      }
-      .toast.error {
-        background: #e74c3c;
-      }
-
-      /* overlay */
-      .custom-dialog-overlay {
-        position: fixed;
-        inset: 0;
-        background: rgba(0, 0, 0, 0.5);
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        z-index: 9999;
-      }
-
-      /* dialog: grid with content (scrollable) + actions (fixed) */
-      .custom-dialog-box {
-        background: white;
-        border-radius: 10px;
-        box-shadow: 0 1px 3px rgba(0, 0, 0, 0.05);
-        width: min(600px, 90vw);
-        max-height: 80vh;
-        display: grid;
-        grid-template-rows: 1fr auto; /* content gets remaining space, actions stay auto-height */
-        overflow: hidden; /* keep actions visible, content will scroll */
-        padding: 18px;
-        font-size: 14px;
-        line-height: 1.45;
-        text-align: center;
-      }
-
-      /* scrollable message area */
-      .custom-dialog-content {
-        overflow-y: auto;
-        padding-right: 6px; /* avoid content touching scrollbar */
-      }
-
-      /* allow multiline text to wrap and keep spacing */
-      .custom-dialog-content .dialog-message {
-        margin: 0 0 8px 0;
-        white-space: pre-wrap; /* preserve \n if you pass text */
-      }
-
-      /* actions row stays below content */
-      .custom-dialog-actions {
-        border-top: 1px solid rgba(0, 0, 0, 0.06);
-        padding-top: 12px;
-        display: flex;
-        justify-content: center;
-        gap: 10px;
-      }
-
-      /* button styling */
-      .custom-dialog-actions button {
-        padding: 8px 14px;
-        border-radius: 6px;
-        border: none;
-        cursor: pointer;
-        font-size: 14px;
-        background: var(--primary);
-        color: white;
-      }
-      .custom-dialog-actions button:hover {
-        background: var(--primary-hover);
-      }
-
-      /* Mobile styles */
-      @media (max-width: 1024px) {
-        .sidebar {
-          transform: translateX(-100%);
-        }
-
-        .sidebar.active {
-          transform: translateX(0);
-        }
-
-        .mobile-header {
-          display: flex;
-        }
-
-        .main-content {
-          margin-left: 0;
-          padding: 5.5rem 1rem 1rem;
-        }
-
-        .main-content {
-          margin-left: 0;
-          padding: 4.5rem 0rem 0rem;
-        }
-
-        .content-header {
-          display: none;
-        }
-
-        .form-row {
-          grid-template-columns: 1fr;
-        }
-
-        .card {
-          padding: 1.5rem;
-          border-radius: 0px;
-          margin-bottom: 0px;
-          border: none;
-          box-shadow: none;
-        }
-      }
-
-      @media (max-width: 640px) {
-        .result-value {
-          font-size: 1.1rem;
-        }
-
-        .result-label {
-          font-size: 0.85rem;
-        }
-
-        .mobile-header-content h1 {
-          font-size: 0.9rem;
-        }
-
-        .mobile-header button {
-          width: 40px;
-          height: 40px;
-        }
-
-        .mobile-header svg {
-          width: 20px;
-          height: 20px;
-        }
-
-        .features-grid {
-          grid-template-columns: repeat(1, 1fr);
-        }
-
-        .link-card a {
-          font-size: small;
-        }
-      }
-    </style>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
+    />
+    <link rel="stylesheet" href="styles.css" />
+    <link rel="manifest" href="manifest.json" />
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
   </head>
   <body>
     <div class="app-container">
-      <!-- Mobile header -->
       <div class="mobile-header">
         <button onclick="toggleMenu()" aria-label="Toggle menu">
-          <svg fill="none" stroke="currentColor" viewBox="0 0 24 24">
+          <svg
+            fill="none"
+            stroke="currentColor"
+            viewBox="0 0 24 24"
+            width="20"
+            height="20"
+          >
             <path
               stroke-linecap="round"
               stroke-linejoin="round"
@@ -564,15 +55,25 @@
         </div>
       </div>
 
-      <!-- Overlay -->
       <div class="overlay" onclick="closeMenu()"></div>
 
-      <!-- Sidebar -->
       <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
           <h1>Financial Calculator</h1>
           <p>Plan your finances smartly</p>
         </div>
+
+        <div class="import-export">
+          <button onclick="exportData()">📥 Export</button>
+          <label>
+            📤 Import
+            <input type="file" accept=".json" onchange="importData(event)" />
+          </label>
+          <button class="reset-all" title="Reset All" onclick="resetAll()">
+            <i class="fas fa-refresh"></i>
+          </button>
+        </div>
+
         <nav class="sidebar-nav">
           <button
             class="nav-item active"
@@ -627,14 +128,25 @@
           </button>
           <button
             class="nav-item"
-            onclick="showCalculator('investment-calculator', this)"
+            onclick="showCalculator('emergency-fund', this)"
           >
-            Advanced Calculator
+            Emergency Fund
           </button>
+          <a
+            class="nav-item"
+            href="https://compound-interest-investment-calculator.github.io/"
+            target="_blank"
+            >Advanced Calculator →</a
+          >
+          <a
+            class="nav-item"
+            href="https://calculate-tax-on-salary.github.io/"
+            target="_blank"
+            >Calculate Tax on Salary →</a
+          >
         </nav>
       </aside>
 
-      <!-- Main content -->
       <main class="main-content">
         <div class="content-header">
           <h2 id="page-title">Loan EMI Calculator</h2>
@@ -643,7 +155,6 @@
           </p>
         </div>
 
-        <!-- Loan EMI Calculator -->
         <section id="loan-emi" class="calculator active">
           <div class="card">
             <div class="small-text">
@@ -653,7 +164,7 @@
 
             <div class="form-group">
               <label>Loan Type</label>
-              <select id="loan-type">
+              <select id="loan-type" onchange="saveInputs()">
                 <option value="regular">Regular EMI Loan</option>
                 <option value="interest-only">Interest-Only Loan</option>
               </select>
@@ -667,6 +178,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter loan amount"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -677,6 +189,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter interest rate"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
@@ -684,7 +197,7 @@
             <div class="form-row">
               <div>
                 <label>Loan Tenure</label>
-                <select id="loan-tenure-type">
+                <select id="loan-tenure-type" onchange="saveInputs()">
                   <option value="years">Years</option>
                   <option value="months">Months</option>
                 </select>
@@ -696,44 +209,101 @@
                   type="number"
                   min="0"
                   placeholder="Enter duration"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateLoanEMI()">
+                Calculate EMI
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('loan-emi')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
-            <button class="calculate-btn" onclick="calculateLoanEMI()">
-              Calculate EMI
-            </button>
+            <div class="results-chart-container">
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label" id="monthly-payment-label"
+                    >Monthly EMI</span
+                  >
+                  <span class="result-value" id="emi-amount">₹0</span>
+                </div>
+                <div class="result-item hide" id="principal-payment-item">
+                  <span class="result-label">Principal Payment at End</span>
+                  <span class="result-value" id="principal-payment">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Interest</span>
+                  <span class="result-value" id="total-interest">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Repayment</span>
+                  <span class="result-value" id="total-amount">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Interest to Principal</span>
+                  <span class="result-value" id="interest-principal-ratio"
+                    >0%</span
+                  >
+                </div>
+                <button
+                  class="amortization-toggle hide"
+                  id="amortization-toggle"
+                  onclick="toggleAmortization()"
+                >
+                  Show Amortization Schedule
+                </button>
+              </div>
 
-            <div class="result-section">
-              <div class="result-item">
-                <span class="result-label" id="monthly-payment-label"
-                  >Monthly EMI</span
-                >
-                <span class="result-value" id="emi-amount">₹0</span>
+              <div class="chart-wrapper">
+                <canvas id="loanChart"></canvas>
               </div>
-              <div class="result-item hide" id="principal-payment-item">
-                <span class="result-label">Principal Payment at End</span>
-                <span class="result-value" id="principal-payment">₹0</span>
+            </div>
+
+            <div class="amortization-section hide" id="amortization-section">
+              <div class="amortization-header">
+                <h3>Amortization Schedule</h3>
+                <button class="close-btn" onclick="toggleAmortization()">
+                  <svg
+                    width="20"
+                    height="20"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M6 18L18 6M6 6l12 12"
+                    />
+                  </svg>
+                </button>
               </div>
-              <div class="result-item">
-                <span class="result-label">Total Interest</span>
-                <span class="result-value" id="total-interest">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Total Amount</span>
-                <span class="result-value" id="total-amount">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Interest to Principal</span>
-                <span class="result-value" id="interest-principal-ratio"
-                  >0%</span
-                >
+              <div class="amortization-table-wrapper">
+                <table class="amortization-table">
+                  <thead>
+                    <tr>
+                      <th>Month</th>
+                      <th class="text-right">EMI</th>
+                      <th class="text-right">Principal</th>
+                      <th class="text-right">Interest</th>
+                      <th class="text-right">Balance</th>
+                    </tr>
+                  </thead>
+                  <tbody id="amortization-tbody"></tbody>
+                </table>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Fixed Deposit Calculator -->
         <section id="fd" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -743,6 +313,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter principal amount"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -755,11 +326,12 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter interest rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
                 <label>Compounding Frequency</label>
-                <select id="fd-compounding">
+                <select id="fd-compounding" onchange="saveInputs()">
                   <option value="4">Quarterly</option>
                   <option value="2">Half-yearly</option>
                   <option value="1">Yearly</option>
@@ -775,31 +347,43 @@
                 type="number"
                 min="0"
                 placeholder="Enter time period"
+                oninput="saveInputs()"
               />
             </div>
-
-            <button class="calculate-btn" onclick="calculateFD()">
-              Calculate FD Returns
-            </button>
-
-            <div class="result-section">
-              <div class="result-item">
-                <span class="result-label">Maturity Amount</span>
-                <span class="result-value" id="fd-maturity">₹0</span>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateFD()">
+                Calculate FD Returns
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('fd')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+            <div class="results-chart-container">
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Maturity Amount</span>
+                  <span class="result-value" id="fd-maturity">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Interest Earned</span>
+                  <span class="result-value" id="fd-interest">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Effective Yield</span>
+                  <span class="result-value" id="fd-yield">0%</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Interest Earned</span>
-                <span class="result-value" id="fd-interest">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Effective Yield</span>
-                <span class="result-value" id="fd-yield">0%</span>
+              <div class="chart-wrapper">
+                <canvas id="fdChart"></canvas>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Recurring Deposit Calculator -->
         <section id="rd" class="calculator">
           <div class="card">
             <div class="form-row">
@@ -810,6 +394,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter monthly deposit"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -820,6 +405,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter interest rate"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
@@ -831,31 +417,44 @@
                 type="number"
                 min="0"
                 placeholder="Enter time period"
+                oninput="saveInputs()"
               />
             </div>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateRD()">
+                Calculate RD Returns
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('rd')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
-            <button class="calculate-btn" onclick="calculateRD()">
-              Calculate RD Returns
-            </button>
-
-            <div class="result-section">
-              <div class="result-item">
-                <span class="result-label">Maturity Amount</span>
-                <span class="result-value" id="rd-maturity">₹0</span>
+            <div class="results-chart-container">
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Maturity Amount</span>
+                  <span class="result-value" id="rd-maturity">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Deposits</span>
+                  <span class="result-value" id="rd-deposits">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Interest Earned</span>
+                  <span class="result-value" id="rd-interest">₹0</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Total Deposits</span>
-                <span class="result-value" id="rd-deposits">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Interest Earned</span>
-                <span class="result-value" id="rd-interest">₹0</span>
+              <div class="chart-wrapper">
+                <canvas id="rdChart"></canvas>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Inflation Calculator -->
         <section id="inflation" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -865,6 +464,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter current amount"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -877,6 +477,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter inflation rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -886,13 +487,22 @@
                   type="number"
                   min="0"
                   placeholder="Enter time period"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
-
-            <button class="calculate-btn" onclick="calculateInflation()">
-              Calculate Impact
-            </button>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateInflation()">
+                Calculate Impact
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('inflation')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
             <div class="result-section">
               <div class="result-item">
@@ -911,7 +521,6 @@
           </div>
         </section>
 
-        <!-- Future Value Calculator -->
         <section id="future-value" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -921,6 +530,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter present value"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -933,11 +543,12 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter interest rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
                 <label>Compounding Frequency</label>
-                <select id="fv-compounding">
+                <select id="fv-compounding" onchange="saveInputs()">
                   <option value="1">Annually</option>
                   <option value="2">Semi-annually</option>
                   <option value="4">Quarterly</option>
@@ -954,12 +565,21 @@
                 type="number"
                 min="0"
                 placeholder="Enter time period"
+                oninput="saveInputs()"
               />
             </div>
-
-            <button class="calculate-btn" onclick="calculateFutureValue()">
-              Calculate Future Value
-            </button>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateFutureValue()">
+                Calculate Future Value
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('future-value')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
             <div class="result-section">
               <div class="result-item">
@@ -978,7 +598,6 @@
           </div>
         </section>
 
-        <!-- Present Value Calculator -->
         <section id="present-value" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -988,6 +607,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter future value"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -1000,6 +620,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter discount rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1009,13 +630,22 @@
                   type="number"
                   min="0"
                   placeholder="Enter time period"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
-
-            <button class="calculate-btn" onclick="calculatePresentValue()">
-              Calculate Present Value
-            </button>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculatePresentValue()">
+                Calculate Present Value
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('present-value')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
             <div class="result-section">
               <div class="result-item">
@@ -1030,7 +660,6 @@
           </div>
         </section>
 
-        <!-- Simple Interest Calculator -->
         <section id="simple-interest" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -1040,6 +669,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter principal amount"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -1052,6 +682,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter interest rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1061,14 +692,22 @@
                   type="number"
                   min="0"
                   placeholder="Enter time period"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
-
-            <button class="calculate-btn" onclick="calculateSimpleInterest()">
-              Calculate Simple Interest
-            </button>
-
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateSimpleInterest()">
+                Calculate Simple Interest
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('simple-interest')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
             <div class="result-section">
               <div class="result-item">
                 <span class="result-label">Simple Interest</span>
@@ -1086,7 +725,6 @@
           </div>
         </section>
 
-        <!-- Compound Interest Calculator -->
         <section id="compound-interest" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -1096,6 +734,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter principal amount"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -1108,11 +747,12 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter interest rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
                 <label>Compounding Frequency</label>
-                <select id="ci-frequency">
+                <select id="ci-frequency" onchange="saveInputs()">
                   <option value="365">Daily</option>
                   <option value="12">Monthly</option>
                   <option value="4">Quarterly</option>
@@ -1129,13 +769,24 @@
                 type="number"
                 min="0"
                 placeholder="Enter time period"
+                oninput="saveInputs()"
               />
             </div>
-
-            <button class="calculate-btn" onclick="calculateCompoundInterest()">
-              Calculate Compound Interest
-            </button>
-
+            <div class="button-container">
+              <button
+                class="calculate-btn"
+                onclick="calculateCompoundInterest()"
+              >
+                Calculate Compound Interest
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('compound-interest')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
             <div class="result-section">
               <div class="result-item">
                 <span class="result-label">Compound Interest</span>
@@ -1153,9 +804,18 @@
           </div>
         </section>
 
-        <!-- SIP Calculator -->
         <section id="sip" class="calculator">
           <div class="card">
+            <div class="form-group">
+              <label>Initial Investment (₹)</label>
+              <input
+                id="sip-initial"
+                type="number"
+                min="0"
+                placeholder="Enter initial lumpsum (if any)"
+                oninput="saveInputs()"
+              />
+            </div>
             <div class="form-row">
               <div>
                 <label>Monthly Investment (₹)</label>
@@ -1164,6 +824,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter monthly SIP amount"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1174,6 +835,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter expected return rate"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
@@ -1186,11 +848,15 @@
                   type="number"
                   min="0"
                   placeholder="Enter investment period"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
                 <label>Step-up Rate (% per annum)</label>
-                <select id="sip-stepup-type">
+                <select
+                  id="sip-stepup-type"
+                  onchange="toggleSipStepup(); saveInputs()"
+                >
                   <option value="none">No Step-up</option>
                   <option value="fixed">Fixed Percentage</option>
                 </select>
@@ -1205,31 +871,44 @@
                 step="0.1"
                 min="0"
                 placeholder="Enter step-up percentage"
+                oninput="saveInputs()"
               />
             </div>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateSIP()">
+                Calculate SIP Returns
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('sip')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
-            <button class="calculate-btn" onclick="calculateSIP()">
-              Calculate SIP Returns
-            </button>
-
-            <div class="result-section">
-              <div class="result-item">
-                <span class="result-label">Maturity Amount</span>
-                <span class="result-value" id="sip-maturity">₹0</span>
+            <div class="results-chart-container">
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Maturity Amount</span>
+                  <span class="result-value" id="sip-maturity">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Investment</span>
+                  <span class="result-value" id="sip-invested">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Returns</span>
+                  <span class="result-value" id="sip-returns">₹0</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Total Investment</span>
-                <span class="result-value" id="sip-invested">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Total Returns</span>
-                <span class="result-value" id="sip-returns">₹0</span>
+              <div class="chart-wrapper">
+                <canvas id="sipChart"></canvas>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- SWP Calculator -->
         <section id="swp" class="calculator">
           <div class="card">
             <div class="form-row">
@@ -1240,6 +919,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter initial investment"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1249,6 +929,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter monthly withdrawal"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
@@ -1262,6 +943,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter expected return rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1271,6 +953,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter withdrawal period"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
@@ -1278,7 +961,10 @@
             <div class="form-row">
               <div>
                 <label>Step-up Rate (% per annum)</label>
-                <select id="swp-stepup-type">
+                <select
+                  id="swp-stepup-type"
+                  onchange="toggleSwpStepup(); saveInputs()"
+                >
                   <option value="none">No Step-up</option>
                   <option value="fixed">Fixed Percentage</option>
                 </select>
@@ -1291,34 +977,47 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter step-up percentage"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateSWP()">
+                Calculate SWP
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('swp')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
-            <button class="calculate-btn" onclick="calculateSWP()">
-              Calculate SWP
-            </button>
-
-            <div class="result-section">
-              <div class="result-item">
-                <span class="result-label">Remaining Balance</span>
-                <span class="result-value" id="swp-balance">₹0</span>
+            <div class="results-chart-container">
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Remaining Balance</span>
+                  <span class="result-value" id="swp-balance">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Withdrawn</span>
+                  <span class="result-value" id="swp-total-withdrawn">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Sustainability</span>
+                  <span class="result-value" id="swp-sustainability"
+                    >0 Years</span
+                  >
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Total Withdrawn</span>
-                <span class="result-value" id="swp-total-withdrawn">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Sustainability</span>
-                <span class="result-value" id="swp-sustainability"
-                  >0 Years</span
-                >
+              <div class="chart-wrapper">
+                <canvas id="swpChart"></canvas>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- Lumpsum Calculator -->
         <section id="lumpsum" class="calculator">
           <div class="card">
             <div class="form-group">
@@ -1328,6 +1027,7 @@
                 type="number"
                 min="0"
                 placeholder="Enter lumpsum amount"
+                oninput="saveInputs()"
               />
             </div>
 
@@ -1340,6 +1040,7 @@
                   step="0.1"
                   min="0"
                   placeholder="Enter expected return rate"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1349,32 +1050,45 @@
                   type="number"
                   min="0"
                   placeholder="Enter investment period"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateLumpsum()">
+                Calculate Returns
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('lumpsum')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
-            <button class="calculate-btn" onclick="calculateLumpsum()">
-              Calculate Returns
-            </button>
-
-            <div class="result-section">
-              <div class="result-item">
-                <span class="result-label">Maturity Value</span>
-                <span class="result-value" id="lumpsum-maturity">₹0</span>
+            <div class="results-chart-container">
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Maturity Value</span>
+                  <span class="result-value" id="lumpsum-maturity">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Total Returns</span>
+                  <span class="result-value" id="lumpsum-returns">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Return Multiple</span>
+                  <span class="result-value" id="lumpsum-multiple">0x</span>
+                </div>
               </div>
-              <div class="result-item">
-                <span class="result-label">Total Returns</span>
-                <span class="result-value" id="lumpsum-returns">₹0</span>
-              </div>
-              <div class="result-item">
-                <span class="result-label">Return Multiple</span>
-                <span class="result-value" id="lumpsum-multiple">0x</span>
+              <div class="chart-wrapper">
+                <canvas id="lumpsumChart"></canvas>
               </div>
             </div>
           </div>
         </section>
 
-        <!-- CAGR Calculator -->
         <section id="cagr" class="calculator">
           <div class="card">
             <div class="form-row">
@@ -1385,6 +1099,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter initial investment"
+                  oninput="saveInputs()"
                 />
               </div>
               <div>
@@ -1394,6 +1109,7 @@
                   type="number"
                   min="0"
                   placeholder="Enter final value"
+                  oninput="saveInputs()"
                 />
               </div>
             </div>
@@ -1405,12 +1121,21 @@
                 type="number"
                 min="0"
                 placeholder="Enter investment period"
+                oninput="saveInputs()"
               />
             </div>
-
-            <button class="calculate-btn" onclick="calculateCAGR()">
-              Calculate CAGR
-            </button>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateCAGR()">
+                Calculate CAGR
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('cagr')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
 
             <div class="result-section">
               <div class="result-item">
@@ -1429,702 +1154,72 @@
           </div>
         </section>
 
-        <!-- Investment Calculator External Link -->
-        <section id="investment-calculator" class="calculator">
+        <section id="emergency-fund" class="calculator">
           <div class="card">
-            <div class="link-card">
-              <p>
-                For comprehensive investment planning with advanced features
-                like goal-based withdrawals, complex SIP scenarios, detailed
-                year-by-year analysis, and sophisticated portfolio tracking.
-              </p>
-              <div class="features">
-                <strong>Features include:</strong>
-                <div class="features-grid">
-                  <div>✓ Goal-based planning</div>
-                  <div>✓ Year-by-year analysis</div>
-                  <div>✓ Multiple withdrawals</div>
-                  <div>✓ Inflation adjustments</div>
-                  <div>✓ Complex SIP scenarios</div>
-                  <div>✓ Portfolio tracking</div>
-                </div>
-              </div>
+            <div class="small-text">
+              Calculate how much you need to save for emergencies based on your
+              monthly expenses
+            </div>
 
-              <a
-                href="https://compound-interest-investment-calculator.github.io/"
-                target="_blank"
-                >Open Advanced Calculator →</a
+            <div class="form-group">
+              <label>Monthly Expenses (₹)</label>
+              <input
+                id="emergency-expense"
+                type="number"
+                min="0"
+                placeholder="Enter your monthly expenses"
+                oninput="saveInputs();"
+              />
+            </div>
+
+            <div class="form-group">
+              <label>Months of Expenses:</label>
+              <input
+                id="emergency-months"
+                type="number"
+                min="0"
+                placeholder="Enter months"
+                oninput="saveInputs();"
+              />
+            </div>
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateEmergencyFund()">
+                Calculate Emergency Fund
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('emergency-fund')"
               >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+            <div class="emergency-result">
+              <div class="emergency-result-label">Target Emergency Fund</div>
+              <div class="emergency-result-value" id="emergency-fund-result">
+                ₹0
+              </div>
+              <div class="emergency-result-detail" id="emergency-fund-detail">
+                0 months of expenses
+              </div>
+            </div>
+
+            <div class="tip-box">
+              <p>
+                <strong>Tip:</strong> Financial experts recommend keeping 3-6
+                months of expenses for emergencies. Increase to 6-12 months if
+                you're self-employed or have irregular income.
+              </p>
             </div>
           </div>
         </section>
       </main>
     </div>
 
-    <script>
-      const calculatorTitles = {
-        "loan-emi": {
-          title: "Loan EMI Calculator",
-          desc: "Calculate your monthly EMI for various loan types",
-        },
-        fd: {
-          title: "Fixed Deposit Calculator",
-          desc: "Calculate returns on your fixed deposit investments",
-        },
-        rd: {
-          title: "Recurring Deposit Calculator",
-          desc: "Plan your recurring deposit investments",
-        },
-        inflation: {
-          title: "Inflation Calculator",
-          desc: "Understand the impact of inflation on your money",
-        },
-        "future-value": {
-          title: "Future Value Calculator",
-          desc: "Calculate the future value of your investments",
-        },
-        "present-value": {
-          title: "Present Value Calculator",
-          desc: "Find the present value of future cash flows",
-        },
-        "simple-interest": {
-          title: "Simple Interest Calculator",
-          desc: "Calculate simple interest on your investments",
-        },
-        "compound-interest": {
-          title: "Compound Interest Calculator",
-          desc: "Calculate compound interest with various frequencies",
-        },
-        sip: {
-          title: "SIP Calculator",
-          desc: "Plan your Systematic Investment Plan",
-        },
-        swp: {
-          title: "SWP Calculator",
-          desc: "Calculate Systematic Withdrawal Plan",
-        },
-        lumpsum: {
-          title: "Lumpsum Calculator",
-          desc: "Calculate returns on lumpsum investments",
-        },
-        cagr: {
-          title: "CAGR Calculator",
-          desc: "Calculate Compound Annual Growth Rate",
-        },
-        "investment-calculator": {
-          title: "Advanced Investment Calculator",
-          desc: "Access comprehensive investment planning tools",
-        },
-      };
-
-      function toggleMenu() {
-        const sidebar = document.getElementById("sidebar");
-        const overlay = document.querySelector(".overlay");
-        sidebar.classList.toggle("active");
-        overlay.classList.toggle("active");
-      }
-
-      function closeMenu() {
-        const sidebar = document.getElementById("sidebar");
-        const overlay = document.querySelector(".overlay");
-        sidebar.classList.remove("active");
-        overlay.classList.remove("active");
-      }
-
-      function showCalculator(id, el) {
-        document
-          .querySelectorAll(".calculator")
-          .forEach((c) => c.classList.remove("active"));
-        document.getElementById(id).classList.add("active");
-        document
-          .querySelectorAll(".nav-item")
-          .forEach((t) => t.classList.remove("active"));
-        if (el) el.classList.add("active");
-
-        // Update page title and description
-        if (calculatorTitles[id]) {
-          document.getElementById("page-title").textContent =
-            calculatorTitles[id].title;
-          document.getElementById("page-description").textContent =
-            calculatorTitles[id].desc;
-          document.getElementById("mobile-page-title").textContent =
-            calculatorTitles[id].title;
-        }
-
-        // Close mobile menu
-        if (window.innerWidth <= 1024) {
-          closeMenu();
-        }
-
-        window.scrollTo({ top: 0, behavior: "smooth" });
-      }
-
-      function formatCurrency(amount) {
-        if (!isFinite(amount)) return "₹0";
-        return new Intl.NumberFormat("en-IN", {
-          style: "currency",
-          currency: "INR",
-          maximumFractionDigits: 0,
-        }).format(amount);
-      }
-
-      function calculateLoanEMI() {
-        const loanType = document.getElementById("loan-type").value;
-        const principal = parseFloat(
-          document.getElementById("loan-amount").value
-        );
-        const annualRate = parseFloat(
-          document.getElementById("loan-rate").value
-        );
-        const tenureType = document.getElementById("loan-tenure-type").value;
-        const tenure = parseFloat(document.getElementById("loan-tenure").value);
-
-        if (
-          !isFinite(principal) ||
-          !isFinite(annualRate) ||
-          !isFinite(tenure)
-        ) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const monthlyRate = annualRate / 12 / 100;
-        const totalMonths = tenureType === "years" ? tenure * 12 : tenure;
-
-        if (loanType === "regular") {
-          const emi =
-            (principal * monthlyRate * Math.pow(1 + monthlyRate, totalMonths)) /
-            (Math.pow(1 + monthlyRate, totalMonths) - 1);
-          const totalAmount = emi * totalMonths;
-          const totalInterest = totalAmount - principal;
-          const interestRatio = (totalInterest / principal) * 100;
-
-          document.getElementById("monthly-payment-label").textContent =
-            "Monthly EMI";
-          document.getElementById("emi-amount").textContent =
-            formatCurrency(emi);
-          document
-            .getElementById("principal-payment-item")
-            .classList.add("hide");
-          document.getElementById("total-interest").textContent =
-            formatCurrency(totalInterest);
-          document.getElementById("total-amount").textContent =
-            formatCurrency(totalAmount);
-          document.getElementById("interest-principal-ratio").textContent =
-            interestRatio.toFixed(1) + "%";
-        } else {
-          const monthlyInterest = principal * monthlyRate;
-          const totalInterest = monthlyInterest * totalMonths;
-          const totalAmount = principal + totalInterest;
-          const interestRatio = (totalInterest / principal) * 100;
-
-          document.getElementById("monthly-payment-label").textContent =
-            "Monthly Interest Payment";
-          document.getElementById("emi-amount").textContent =
-            formatCurrency(monthlyInterest);
-          document
-            .getElementById("principal-payment-item")
-            .classList.remove("hide");
-          document.getElementById("principal-payment").textContent =
-            formatCurrency(principal);
-          document.getElementById("total-interest").textContent =
-            formatCurrency(totalInterest);
-          document.getElementById("total-amount").textContent =
-            formatCurrency(totalAmount);
-          document.getElementById("interest-principal-ratio").textContent =
-            interestRatio.toFixed(1) + "%";
-        }
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateInflation() {
-        const amount = parseFloat(
-          document.getElementById("inflation-amount").value
-        );
-        const rate = parseFloat(
-          document.getElementById("inflation-rate").value
-        );
-        const years = parseFloat(
-          document.getElementById("inflation-years").value
-        );
-
-        if (!isFinite(amount) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const futureCost = amount * Math.pow(1 + rate / 100, years);
-        const increase = futureCost - amount;
-        const purchasingPower = (amount / futureCost) * 100;
-
-        document.getElementById("inflation-future-cost").textContent =
-          formatCurrency(futureCost);
-        document.getElementById("inflation-increase").textContent =
-          formatCurrency(increase);
-        document.getElementById("purchasing-power").textContent =
-          purchasingPower.toFixed(1) + "%";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateFutureValue() {
-        const presentValue = parseFloat(
-          document.getElementById("fv-present-value").value
-        );
-        const rate = parseFloat(document.getElementById("fv-rate").value);
-        const years = parseFloat(document.getElementById("fv-years").value);
-        const compounding = parseInt(
-          document.getElementById("fv-compounding").value,
-          10
-        );
-
-        if (!isFinite(presentValue) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const futureValue =
-          presentValue *
-          Math.pow(1 + rate / 100 / compounding, compounding * years);
-        const interestEarned = futureValue - presentValue;
-        const growthMultiple = futureValue / presentValue;
-
-        document.getElementById("future-value-result").textContent =
-          formatCurrency(futureValue);
-        document.getElementById("fv-interest-earned").textContent =
-          formatCurrency(interestEarned);
-        document.getElementById("fv-growth-multiple").textContent =
-          growthMultiple.toFixed(2) + "x";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculatePresentValue() {
-        const futureValue = parseFloat(
-          document.getElementById("pv-future-value").value
-        );
-        const rate = parseFloat(document.getElementById("pv-rate").value);
-        const years = parseFloat(document.getElementById("pv-years").value);
-
-        if (!isFinite(futureValue) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const presentValue = futureValue / Math.pow(1 + rate / 100, years);
-        const discount = futureValue - presentValue;
-
-        document.getElementById("present-value-result").textContent =
-          formatCurrency(presentValue);
-        document.getElementById("pv-discount").textContent =
-          formatCurrency(discount);
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateSIP() {
-        const monthlyAmount = parseFloat(
-          document.getElementById("sip-amount").value
-        );
-        const annualRate = parseFloat(
-          document.getElementById("sip-rate").value
-        );
-        const years = parseFloat(document.getElementById("sip-years").value);
-        const stepupType = document.getElementById("sip-stepup-type").value;
-        const stepupRate =
-          parseFloat(document.getElementById("sip-stepup").value) || 0;
-
-        if (
-          !isFinite(monthlyAmount) ||
-          !isFinite(annualRate) ||
-          !isFinite(years)
-        ) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const monthlyRate = annualRate / 12 / 100;
-        const totalMonths = years * 12;
-        let maturityAmount = 0;
-        let totalInvestment = 0;
-        let currentSIP = monthlyAmount;
-
-        if (stepupType === "none") {
-          maturityAmount =
-            monthlyAmount *
-            ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate) *
-            (1 + monthlyRate);
-          totalInvestment = monthlyAmount * totalMonths;
-        } else {
-          for (let month = 1; month <= totalMonths; month++) {
-            if (month > 1 && (month - 1) % 12 === 0) {
-              currentSIP = currentSIP * (1 + stepupRate / 100);
-            }
-            const remainingMonths = totalMonths - month + 1;
-            maturityAmount +=
-              currentSIP * Math.pow(1 + monthlyRate, remainingMonths);
-            totalInvestment += currentSIP;
-          }
-        }
-
-        const totalReturns = maturityAmount - totalInvestment;
-
-        document.getElementById("sip-maturity").textContent =
-          formatCurrency(maturityAmount);
-        document.getElementById("sip-invested").textContent =
-          formatCurrency(totalInvestment);
-        document.getElementById("sip-returns").textContent =
-          formatCurrency(totalReturns);
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateSWP() {
-        const initialAmount = parseFloat(
-          document.getElementById("swp-initial").value
-        );
-        const monthlyWithdrawal = parseFloat(
-          document.getElementById("swp-withdrawal").value
-        );
-        const annualRate = parseFloat(
-          document.getElementById("swp-rate").value
-        );
-        const years = parseFloat(document.getElementById("swp-years").value);
-        const stepupType = document.getElementById("swp-stepup-type").value;
-        const stepupRate =
-          parseFloat(document.getElementById("swp-stepup").value) || 0;
-
-        if (
-          !isFinite(initialAmount) ||
-          !isFinite(monthlyWithdrawal) ||
-          !isFinite(annualRate) ||
-          !isFinite(years)
-        ) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const monthlyRate = annualRate / 12 / 100;
-        const totalMonths = years * 12;
-        let balance = initialAmount;
-        let totalWithdrawn = 0;
-        let currentWithdrawal = monthlyWithdrawal;
-
-        for (let month = 1; month <= totalMonths; month++) {
-          if (stepupType !== "none" && month > 1 && (month - 1) % 12 === 0) {
-            currentWithdrawal = currentWithdrawal * (1 + stepupRate / 100);
-          }
-          balance = balance * (1 + monthlyRate) - currentWithdrawal;
-          totalWithdrawn += currentWithdrawal;
-          if (balance <= 0) {
-            balance = 0;
-            break;
-          }
-        }
-
-        let tempBalance = initialAmount;
-        let months = 0;
-        let tempWithdrawal = monthlyWithdrawal;
-        while (tempBalance > tempWithdrawal && months < 1200) {
-          if (stepupType !== "none" && months > 0 && months % 12 === 0) {
-            tempWithdrawal = tempWithdrawal * (1 + stepupRate / 100);
-          }
-          tempBalance = tempBalance * (1 + monthlyRate) - tempWithdrawal;
-          months++;
-        }
-
-        document.getElementById("swp-balance").textContent = formatCurrency(
-          Math.max(0, balance)
-        );
-        document.getElementById("swp-total-withdrawn").textContent =
-          formatCurrency(totalWithdrawn);
-        document.getElementById("swp-sustainability").textContent =
-          (months / 12).toFixed(0) + " Years";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateLumpsum() {
-        const amount = parseFloat(
-          document.getElementById("lumpsum-amount").value
-        );
-        const rate = parseFloat(document.getElementById("lumpsum-rate").value);
-        const years = parseFloat(
-          document.getElementById("lumpsum-years").value
-        );
-
-        if (!isFinite(amount) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const maturityValue = amount * Math.pow(1 + rate / 100, years);
-        const returns = maturityValue - amount;
-        const multiple = maturityValue / amount;
-
-        document.getElementById("lumpsum-maturity").textContent =
-          formatCurrency(maturityValue);
-        document.getElementById("lumpsum-returns").textContent =
-          formatCurrency(returns);
-        document.getElementById("lumpsum-multiple").textContent =
-          multiple.toFixed(2) + "x";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateFD() {
-        const principal = parseFloat(
-          document.getElementById("fd-principal").value
-        );
-        const rate = parseFloat(document.getElementById("fd-rate").value);
-        const years = parseFloat(document.getElementById("fd-years").value);
-        const compounding = parseInt(
-          document.getElementById("fd-compounding").value,
-          10
-        );
-
-        if (!isFinite(principal) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const maturityAmount =
-          principal *
-          Math.pow(1 + rate / 100 / compounding, compounding * years);
-        const interest = maturityAmount - principal;
-        const effectiveYield = ((maturityAmount / principal - 1) / years) * 100;
-
-        document.getElementById("fd-maturity").textContent =
-          formatCurrency(maturityAmount);
-        document.getElementById("fd-interest").textContent =
-          formatCurrency(interest);
-        document.getElementById("fd-yield").textContent =
-          effectiveYield.toFixed(2) + "%";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateRD() {
-        const monthlyDeposit = parseFloat(
-          document.getElementById("rd-monthly").value
-        );
-        const annualRate = parseFloat(document.getElementById("rd-rate").value);
-        const years = parseFloat(document.getElementById("rd-years").value);
-
-        if (
-          !isFinite(monthlyDeposit) ||
-          !isFinite(annualRate) ||
-          !isFinite(years)
-        ) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const monthlyRate = annualRate / 12 / 100;
-        const totalMonths = years * 12;
-        const maturityAmount =
-          monthlyDeposit *
-          ((Math.pow(1 + monthlyRate, totalMonths) - 1) / monthlyRate) *
-          (1 + monthlyRate);
-        const totalDeposits = monthlyDeposit * totalMonths;
-        const interest = maturityAmount - totalDeposits;
-
-        document.getElementById("rd-maturity").textContent =
-          formatCurrency(maturityAmount);
-        document.getElementById("rd-deposits").textContent =
-          formatCurrency(totalDeposits);
-        document.getElementById("rd-interest").textContent =
-          formatCurrency(interest);
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateCAGR() {
-        const initialValue = parseFloat(
-          document.getElementById("cagr-initial").value
-        );
-        const finalValue = parseFloat(
-          document.getElementById("cagr-final").value
-        );
-        const years = parseFloat(document.getElementById("cagr-years").value);
-
-        if (
-          !isFinite(initialValue) ||
-          !isFinite(finalValue) ||
-          !isFinite(years)
-        ) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const cagr = (Math.pow(finalValue / initialValue, 1 / years) - 1) * 100;
-        const returns = finalValue - initialValue;
-        const multiple = finalValue / initialValue;
-
-        document.getElementById("cagr-rate").textContent =
-          cagr.toFixed(2) + "%";
-        document.getElementById("cagr-returns").textContent =
-          formatCurrency(returns);
-        document.getElementById("cagr-multiple").textContent =
-          multiple.toFixed(2) + "x";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateSimpleInterest() {
-        const principal = parseFloat(
-          document.getElementById("si-principal").value
-        );
-        const rate = parseFloat(document.getElementById("si-rate").value);
-        const years = parseFloat(document.getElementById("si-years").value);
-
-        if (!isFinite(principal) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const simpleInterest = (principal * rate * years) / 100;
-        const finalAmount = principal + simpleInterest;
-        const totalReturnRate = (simpleInterest / principal) * 100;
-
-        document.getElementById("si-interest").textContent =
-          formatCurrency(simpleInterest);
-        document.getElementById("si-final").textContent =
-          formatCurrency(finalAmount);
-        document.getElementById("si-total-rate").textContent =
-          totalReturnRate.toFixed(2) + "%";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-      function calculateCompoundInterest() {
-        const principal = parseFloat(
-          document.getElementById("ci-principal").value
-        );
-        const rate = parseFloat(document.getElementById("ci-rate").value);
-        const years = parseFloat(document.getElementById("ci-years").value);
-        const frequency = parseInt(
-          document.getElementById("ci-frequency").value,
-          10
-        );
-
-        if (!isFinite(principal) || !isFinite(rate) || !isFinite(years)) {
-          showCustomDialog("All Fields are Mandatory", "error");
-          return;
-        }
-
-        const finalAmount =
-          principal * Math.pow(1 + rate / 100 / frequency, frequency * years);
-        const compoundInterest = finalAmount - principal;
-        const effectiveRate =
-          Math.pow(1 + rate / 100 / frequency, frequency) - 1;
-
-        document.getElementById("ci-interest").textContent =
-          formatCurrency(compoundInterest);
-        document.getElementById("ci-final").textContent =
-          formatCurrency(finalAmount);
-        document.getElementById("ci-effective-rate").textContent =
-          (effectiveRate * 100).toFixed(2) + "%";
-        showToast("Calculations Done. Enjoy!", "success");
-      }
-
-const ICONS = {
-  success: "✅",
-  error: "❌",
-  warning: "⚠️",
-  info: "ℹ️",
-};
-
-      // === Toast utility ===
-      function getToastContainer() {
-        let container = document.querySelector(".toast-container");
-        if (!container) {
-          container = document.createElement("div");
-          container.className = "toast-container";
-          document.body.appendChild(container);
-        }
-        return container;
-      }
-
-      function showToast(message, type = "info") {
-        const container = getToastContainer();
-
-        const toast = document.createElement("div");
-        toast.className = `toast ${type}`;
-
-        const icon = ICONS[type] || "";
-        toast.innerText = `${icon} ${message}`;
-
-        container.appendChild(toast);
-
-        // Animate in
-        setTimeout(() => toast.classList.add("show"), 10);
-
-        // Remove after 3s
-        setTimeout(() => {
-          toast.classList.remove("show");
-          setTimeout(() => toast.remove(), 300);
-        }, 1000);
-      }
-
-      function showCustomDialog(message, type = "info") {
-        return new Promise((resolve) => {
-          // Create overlay + box
-          const overlay = document.createElement("div");
-          overlay.className = "custom-dialog-overlay";
-
-          const box = document.createElement("div");
-          box.className = "custom-dialog-box";
-
-          // Content (scrollable)
-          const content = document.createElement("div");
-          content.className = "custom-dialog-content";
-
-          // Use a container for message. We allow HTML (so <br/> works).
-          // If message may contain untrusted input, sanitize it first.
-          const msg = document.createElement("div");
-          msg.className = "dialog-message";
-          msg.innerHTML = `${ICONS[type] || ""} ${message}`; // message can contain <br/> or HTML
-
-          content.appendChild(msg);
-
-          // Actions (fixed at bottom of dialog)
-          const actions = document.createElement("div");
-          actions.className = "custom-dialog-actions";
-          const okBtn = document.createElement("button");
-          okBtn.type = "button";
-          okBtn.innerText = "OK";
-          okBtn.addEventListener("click", () => {
-            document.body.removeChild(overlay);
-            resolve(true);
-          });
-          actions.appendChild(okBtn);
-
-          // assemble
-          box.appendChild(content);
-          box.appendChild(actions);
-          overlay.appendChild(box);
-          document.body.appendChild(overlay);
-
-          // OPTIONAL: focus the button so keyboard users can press Enter
-          okBtn.focus();
-        });
-      }
-
-      // Initialize step-up listeners
-      document.addEventListener("DOMContentLoaded", function () {
-        document
-          .getElementById("sip-stepup-type")
-          .addEventListener("change", function () {
-            const group = document.getElementById("sip-stepup-group");
-            if (this.value === "fixed") {
-              group.classList.remove("hide");
-            } else {
-              group.classList.add("hide");
-            }
-          });
-
-        document
-          .getElementById("swp-stepup-type")
-          .addEventListener("change", function () {
-            const group = document.getElementById("swp-stepup-group");
-            if (this.value === "fixed") {
-              group.classList.remove("hide");
-            } else {
-              group.classList.add("hide");
-            }
-          });
-      });
-    </script>
+    <script src="script.js"></script>
+    <script src="calculators.js"></script>
+    <script src="data-handler.js"></script>
+    <script src="charts.js"></script>
+    <script src="alerts.js"></script>
   </body>
 </html>
