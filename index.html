@@ -4,18 +4,49 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Financial Calculator by Pabitra</title>
+    <meta
+      http-equiv="Cache-Control"
+      content="no-cache, no-store, must-revalidate"
+    />
+    <meta http-equiv="Pragma" content="no-cache" />
+    <meta http-equiv="Expires" content="0" />
+
+    <!-- Standard favicon -->
+    <link rel="icon" href="/icons/favicon.ico" />
+
+    <!-- SVG favicon (for modern browsers) -->
+    <link rel="icon" type="image/svg+xml" href="/icons/favicon.svg" />
+
+    <!-- PNG icons for older or specific browsers -->
     <link
       rel="icon"
       type="image/png"
-      sizes="32x32"
-      href="icons/favicon-32.png"
+      sizes="96x96"
+      href="/icons/icon-96x96.png"
     />
     <link
       rel="icon"
       type="image/png"
-      sizes="16x16"
-      href="icons/favicon-16.png"
+      sizes="192x192"
+      href="/icons/icon-192x192.png"
     />
+
+    <link
+      rel="icon"
+      type="image/png"
+      sizes="512x512"
+      href="/icons/icon-512x512.png"
+    />
+
+    <!-- Apple touch icon (iOS home screen) -->
+    <link
+      rel="apple-touch-icon"
+      sizes="180x180"
+      href="/icons/apple-touch-icon.png"
+    />
+
+    <!-- Optional: legacy shortcut icon -->
+    <link rel="shortcut icon" href="/icons/favicon.ico" />
 
     <link
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap"
@@ -30,8 +61,22 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
+    <script src="https://cdn.jsdelivr.net/npm/exceljs/dist/exceljs.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/file-saver@2.0.5/dist/FileSaver.min.js"></script>
   </head>
   <body>
+    <div class="splash-screen" id="splash-screen">
+      <div class="splash-content">
+        <img src="icons/icon-192.png" alt="Logo" class="splash-icon" />
+        <h1 class="splash-title">Financial Calculator</h1>
+        <p class="splash-subtitle">Plan your finances smartly</p>
+        <div class="splash-loader">
+          <div class="bubble"></div>
+          <div class="bubble"></div>
+          <div class="bubble"></div>
+        </div>
+      </div>
+    </div>
     <div class="app-container">
       <div class="mobile-header">
         <button onclick="toggleMenu()" aria-label="Toggle menu">
@@ -132,18 +177,18 @@
           >
             Emergency Fund
           </button>
-          <a
+          <button
             class="nav-item"
-            href="https://compound-interest-investment-calculator.github.io/"
-            target="_blank"
-            >Advanced Calculator →</a
+            onclick="showCalculator('investment-calculator', this)"
           >
-          <a
+            Investment Calculator
+          </button>
+          <button
             class="nav-item"
-            href="https://calculate-tax-on-salary.github.io/"
-            target="_blank"
-            >Calculate Tax on Salary →</a
+            onclick="showCalculator('tax-calculator', this)"
           >
+            Tax Calculator
+          </button>
         </nav>
       </aside>
 
@@ -175,10 +220,10 @@
                 <label>Loan Amount (₹)</label>
                 <input
                   id="loan-amount"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter loan amount"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
               <div>
@@ -291,10 +336,10 @@
                   <thead>
                     <tr>
                       <th>Month</th>
-                      <th class="text-right">EMI</th>
-                      <th class="text-right">Principal</th>
-                      <th class="text-right">Interest</th>
-                      <th class="text-right">Balance</th>
+                      <th>EMI</th>
+                      <th>Principal</th>
+                      <th>Interest</th>
+                      <th>Balance</th>
                     </tr>
                   </thead>
                   <tbody id="amortization-tbody"></tbody>
@@ -310,10 +355,10 @@
               <label>Principal Amount (₹)</label>
               <input
                 id="fd-principal"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter principal amount"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -391,10 +436,10 @@
                 <label>Monthly Deposit (₹)</label>
                 <input
                   id="rd-monthly"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter monthly deposit"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
               <div>
@@ -461,10 +506,10 @@
               <label>Current Amount (₹)</label>
               <input
                 id="inflation-amount"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter current amount"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -527,10 +572,10 @@
               <label>Present Value (₹)</label>
               <input
                 id="fv-present-value"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter present value"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -604,10 +649,10 @@
               <label>Future Value (₹)</label>
               <input
                 id="pv-future-value"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter future value"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -666,10 +711,10 @@
               <label>Principal Amount (₹)</label>
               <input
                 id="si-principal"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter principal amount"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -731,10 +776,10 @@
               <label>Principal Amount (₹)</label>
               <input
                 id="ci-principal"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter principal amount"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -810,10 +855,10 @@
               <label>Initial Investment (₹)</label>
               <input
                 id="sip-initial"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter initial lumpsum (if any)"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
             <div class="form-row">
@@ -821,10 +866,10 @@
                 <label>Monthly Investment (₹)</label>
                 <input
                   id="sip-amount"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter monthly SIP amount"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
               <div>
@@ -916,20 +961,20 @@
                 <label>Initial Investment (₹)</label>
                 <input
                   id="swp-initial"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter initial investment"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
               <div>
                 <label>Monthly Withdrawal (₹)</label>
                 <input
                   id="swp-withdrawal"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter monthly withdrawal"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
             </div>
@@ -1024,10 +1069,10 @@
               <label>Investment Amount (₹)</label>
               <input
                 id="lumpsum-amount"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter lumpsum amount"
-                oninput="saveInputs()"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
@@ -1096,20 +1141,20 @@
                 <label>Initial Investment (₹)</label>
                 <input
                   id="cagr-initial"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter initial investment"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
               <div>
                 <label>Final Value (₹)</label>
                 <input
                   id="cagr-final"
-                  type="number"
+                  type="text"
                   min="0"
                   placeholder="Enter final value"
-                  oninput="saveInputs()"
+                  oninput="formatIndianNumber(this); saveInputs();"
                 />
               </div>
             </div>
@@ -1165,15 +1210,15 @@
               <label>Monthly Expenses (₹)</label>
               <input
                 id="emergency-expense"
-                type="number"
+                type="text"
                 min="0"
                 placeholder="Enter your monthly expenses"
-                oninput="saveInputs();"
+                oninput="formatIndianNumber(this); saveInputs();"
               />
             </div>
 
             <div class="form-group">
-              <label>Months of Expenses:</label>
+              <label>Months of Expenses</label>
               <input
                 id="emergency-months"
                 type="number"
@@ -1206,20 +1251,2266 @@
 
             <div class="tip-box">
               <p>
-                <strong>Tip:</strong> Financial experts recommend keeping 3-6
+                <strong>Tip</strong> Financial experts recommend keeping 3-6
                 months of expenses for emergencies. Increase to 6-12 months if
                 you're self-employed or have irregular income.
               </p>
             </div>
           </div>
         </section>
+        <section id="investment-calculator" class="calculator">
+          <div class="inputs-section">
+            <div class="child">
+              <div class="form-row">
+                <div>
+                  <label
+                    >Inflation Rate (%)<span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        Used for present value and goal adjustments. Default is
+                        <span class="inflation">6</span>%
+                      </span>
+                    </span></label
+                  >
+                  <input
+                    class="inflationRate"
+                    id="inflationRate"
+                    name="inflationRate"
+                    type="number"
+                    min="0"
+                    value="6"
+                    placeholder="Enter inflation rate"
+                    oninput="saveInputs()"
+                  />
+                </div>
+                <div>
+                  <label>Starting Year</label>
+                  <select
+                    class="investmentYear"
+                    id="investmentYear"
+                    name="investmentYear"
+                    onchange="saveInputs()"
+                  ></select>
+                </div>
+                <div>
+                  <label>Initial Investment (&#8377;)</label>
+                  <input
+                    class="initialInvestment"
+                    id="initialInvestment"
+                    name="initialInvestment"
+                    type="text"
+                    min="0"
+                    value="100000"
+                    placeholder="Enter initial investment"
+                    oninput="formatIndianNumber(this); saveInputs();"
+                  />
+                </div>
+              </div>
+              <div class="form-row">
+                <div>
+                  <label>Yearly Interest Rate (%)</label>
+                  <input
+                    type="number"
+                    value="12"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="interestRate"
+                    id="interestRate"
+                    name="interestRate"
+                    placeholder="Enter yearly interest rate"
+                    oninput="saveInputs()"
+                  />
+                </div>
+                <div>
+                  <label>Time Period (years)</label>
+                  <input
+                    type="number"
+                    value="10"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="years"
+                    name="years"
+                    id="years"
+                    placeholder="Enter number of years"
+                    oninput="saveInputs()"
+                  />
+                </div>
+                <div>
+                  <label>Compounding Frequency</label>
+                  <select
+                    name="compoundingFrequency"
+                    id="compoundingFrequency"
+                    class="compoundingFrequency"
+                    onchange="saveInputs()"
+                  >
+                    <option value="12" selected>Monthly</option>
+                    <option value="4">Quarterly</option>
+                    <option value="2">Half-Yearly</option>
+                    <option value="1">Yearly</option>
+                  </select>
+                </div>
+              </div>
+              <div class="separator"></div>
+              <div class="form-row">
+                <div>
+                  <label
+                    >Adjust Interest Rate As You Age?<span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        As you get older your risk appetite might be low and you
+                        would be little conservative.
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="decreaseInterestRateToggle"
+                    id="decreaseInterestRateToggle"
+                    class="decreaseInterestRateToggle"
+                    onchange="toggleDecreaseInterestRate('');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+                <div class="decreaseInterestRateRows">
+                  <label
+                    >Change Interest Rate After Years<span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years
+                      </span>
+                    </span></label
+                  >
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="decreaseInterestRateAfterYears"
+                    id="decreaseInterestRateAfterYears"
+                    name="decreaseInterestRateAfterYears"
+                    placeholder="Change after years"
+                    oninput="saveInputs()"
+                  />
+                </div>
+                <div class="decreaseInterestRateRows">
+                  <label>Update Interest Rate To (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="updatedInterestRate"
+                    name="updatedInterestRate"
+                    id="updatedInterestRate"
+                    placeholder="Enter updated interest rate"
+                    oninput="saveInputs()"
+                  />
+                </div>
+              </div>
+              <div class="separator"></div>
+              <div class="form-row">
+                <div>
+                  <label
+                    >Enable SIP<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        A regular Withdrawal Plan after a certain period like
+                        SIP.
+                      </span>
+                    </span></label
+                  >
+                </div>
+                <div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      id="toggleSIP"
+                      onchange="toggleSIP('');"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+              <div class="form-row sipRows">
+                <div>
+                  <label>Deposit Amount</label>
+                  <input
+                    type="text"
+                    value="25000"
+                    step="50"
+                    placeholder="0"
+                    class="sipAmount"
+                    id="sipAmount"
+                    name="sipAmount"
+                    placeholder="Enter SIP amount"
+                    oninput="formatIndianNumber(this); saveInputs();"
+                  />
+                </div>
+                <div>
+                  <label>Deposit Frequency</label>
+                  <select
+                    name="investmentFrequency"
+                    id="investmentFrequency"
+                    class="investmentFrequency"
+                  >
+                    <option value="1" selected>Monthly</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+                <div>
+                  <label
+                    >SIP Capping<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">Max SIP Allowed Per Month</span>
+                    </span></label
+                  >
+
+                  <input
+                    type="text"
+                    class="sipThreshold"
+                    id="sipThreshold"
+                    value="200000"
+                    placeholder="Enter SIP cap"
+                    oninput="formatIndianNumber(this); saveInputs();"
+                  />
+                </div>
+              </div>
+
+              <div class="sipRows form-row">
+                <div>
+                  <label
+                    >SIP Stepup<span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        Want to increase deposit every year/quarter/half-yearly?
+                      </span>
+                    </span></label
+                  >
+                  <select
+                    name="stepUpSIP"
+                    id="stepUpSIP"
+                    class="stepUpSIP"
+                    onchange="toggleStepUpSIP('')"
+                  >
+                    <option value="0" selected>None</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+                <div class="sipStepUpRows">
+                  <label>Increase Deposit By (%)</label>
+                  <input
+                    type="number"
+                    value="10"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="stepUpIncreasePercentage"
+                    id="stepUpIncreasePercentage"
+                    name="stepUpIncreasePercentage"
+                    placeholder="Enter Stepup"
+                    oninput="saveInputs()"
+                  />
+                </div>
+              </div>
+              <div class="form-row sipRows sipStepUpRows">
+                <div>
+                  <label
+                    >Change StepUp As You Age?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        As the investment grows it might be difficult to
+                        maintain same % of increase/decrease after few years.
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="decreaseStepUp"
+                    id="decreaseStepUp"
+                    class="decreaseStepUp"
+                    onchange="decreaseStepUp('');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+                <div class="decreaseStepUpRows">
+                  <label
+                    >Change StepUp After Years<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip"
+                        >Ideally this value should be less than total number of
+                        years</span
+                      >
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="decreaseStepUpAfterYears"
+                    placeholder="Enter year"
+                  />
+                </div>
+
+                <div class="decreaseStepUpRows">
+                  <label>Update StepUp To (%)</label>
+                  <input
+                    type="number"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="updatedStepUpPercentage"
+                    placeholder="Updated rate"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row sipRows">
+                <div>
+                  <label
+                    >Stop SIP after a certain period?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        If you want to stop contributing more and just hold the
+                        investments.
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="stopSIP"
+                    id="stopSIP"
+                    class="stopSIP"
+                    onchange="toggleStopSip('');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="stopSipRows">
+                  <label
+                    >Stop SIP After Years<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip"
+                        >Ideally this value should be less than total number of
+                        years</span
+                      >
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="stopSipAfterYears"
+                    placeholder="Enter year"
+                  />
+                </div>
+              </div>
+              <div class="form-row sipRows">
+                <div>
+                  <label
+                    >Want to go for a Bonus SIP?
+                    <span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        An additional investment you might do as you get a bonus
+                        or incentive.
+                      </span>
+                    </span></label
+                  >
+                  <select
+                    name="bonusSIP"
+                    id="bonusSIP"
+                    class="bonusSIP"
+                    onchange="toggleBonusSIP('');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="bonusSipTable">
+                  <label>Bonus SIP Amount (₹)</label>
+                  <input
+                    type="text"
+                    class="bonusSipAmount"
+                    placeholder="Enter bonus SIP amount"
+                    oninput="formatIndianNumber(this); saveInputs();"
+                  />
+                </div>
+
+                <div class="bonusSipTable">
+                  <label>Bonus SIP Frequency</label>
+                  <select class="bonusSipFrequency" id="bonusSipFrequency">
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+
+                <div class="bonusSipTable">
+                  <label
+                    >Bonus SIP StepUp<span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        Want to increase deposit every year/quarter/half-yearly?
+                      </span>
+                    </span></label
+                  >
+                  <select
+                    name="stepUpBonusSIP"
+                    id="stepUpBonusSIP"
+                    class="stepUpBonusSIP"
+                    onchange="toggleStepUpBonusSIP('')"
+                  >
+                    <option value="0" selected>None</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+
+                <div class="bonusSipTable bonusSipStepUpRows">
+                  <label>Increase Bonus SIP By (%)</label>
+                  <input
+                    type="number"
+                    value="5"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="bonusSipStepUpPercentage"
+                  />
+                </div>
+                <div class="bonusSipTable bonusSipStepUpRows">
+                  <label>Bonus SIP StepUp Frequency</label>
+                  <select
+                    class="bonusSipStepUpFrequency"
+                    id="bonusSipStepUpFrequency"
+                  >
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12" selected>Yearly</option>
+                  </select>
+                </div>
+              </div>
+              <div class="separator"></div>
+              <div class="form-row swpOptions">
+                <div>
+                  <label
+                    >Enable SWP
+                    <span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        A regular Withdrawal Plan after a certain period like
+                        SIP.
+                      </span>
+                    </span></label
+                  >
+                </div>
+                <div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      id="swpAdv"
+                      onchange="toggleAdvSWP('');"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-row swpTable">
+                <div>
+                  <label
+                    >Withdrawal After Years<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years.
+                      </span>
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="withdrawalAfterYears"
+                    placeholder="Enter year"
+                  />
+                </div>
+
+                <div>
+                  <label
+                    >Withdrawal Amount (as per today)<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Entered value will be inflated till the SWP start year.
+                        E.g., if your today's expenses are ₹30000, after 20
+                        years with a 6% inflation it would be ₹96000.
+                      </span>
+                    </span></label
+                  >
+
+                  <input
+                    type="text"
+                    class="withdrawalAmount"
+                    value="50000"
+                    placeholder="Enter amount"
+                    oninput="formatIndianNumber(this);"
+                  />
+                </div>
+
+                <div>
+                  <label>Withdrawal Frequency</label>
+                  <select class="withdrawalFrequency" id="withdrawalFrequency">
+                    <option value="1" selected>Monthly</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+
+                <div>
+                  <label
+                    >SWP StepUp<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Want to increase withdrawals every
+                        year/quarter/half-yearly?
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="stepUpSWP"
+                    id="stepUpSWP"
+                    class="stepUpSWP"
+                    onchange="toggleAdvSWPStepUp('');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="withdrawalStepUpRows">
+                  <label>Increase Withdrawal By (%)</label>
+                  <input
+                    type="number"
+                    value="5"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="withdrawalStepUpPercentage"
+                  />
+                </div>
+                <div class="withdrawalStepUpRows">
+                  <label>SWP Frequency</label>
+                  <select
+                    class="withdrawalStepUpFrequency"
+                    id="withdrawalStepUpFrequency"
+                  >
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12" selected>Yearly</option>
+                  </select>
+                </div>
+              </div>
+              <div class="separator"></div>
+              <div class="form-row lumpsumWithdrawalOptions">
+                <div>
+                  <label
+                    >Lumpsum Goal-Based Withdrawals?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Irregular Withdrawal Plan at any of years of your
+                        investment for any kind of goals.
+                      </span>
+                    </span></label
+                  >
+                </div>
+                <div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      id="lumpsumWithdrawal"
+                      onchange="toggleLumpsumWithdrawal('');"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-group lumpsumWithdrawalTable">
+                <table class="sub-table no-left-pad">
+                  <tbody>
+                    <tr>
+                      <td class="no-height" colspan="2">
+                        <div class="button_container">
+                          <div class="left-container">
+                            <button
+                              type="button"
+                              class="add-goal-btn"
+                              onclick="downloadGoalTemplate()"
+                            >
+                              <i class="fas fa-download"></i> Download Template
+                            </button>
+                            <input
+                              type="file"
+                              id="goalFile"
+                              accept=".xlsx"
+                              style="display: none"
+                            />
+                            <button
+                              type="button"
+                              class="add-goal-btn"
+                              onclick="document.getElementById('goalFile').click()"
+                            >
+                              <i class="fas fa-file-upload"></i>
+                              Import Goals
+                            </button>
+                          </div>
+                          <div class="right-container">
+                            <button
+                              type="button"
+                              class="add-goal-btn danger-btn"
+                              onclick="removeAllGoalsWithCounter()"
+                            >
+                              <i class="fas fa-trash-alt"></i> Remove All
+                            </button>
+                            <button
+                              type="button"
+                              class="add-goal-btn"
+                              onclick="addGoalRowWithCounter(undefined, undefined, undefined, undefined, true);"
+                            >
+                              <i class="fas fa-plus"></i> Add Goal
+                            </button>
+                          </div>
+                        </div>
+                        <table
+                          class="goalWithdrawalTable"
+                          style="margin-top: 10px; width: 100%"
+                        >
+                          <thead>
+                            <tr>
+                              <th>Goal Name</th>
+                              <th>Year</th>
+                              <th>Today's Value (₹)</th>
+                              <th class="desktop-only">Action</th>
+                            </tr>
+                          </thead>
+                          <tbody id="goalWithdrawalRows">
+                            <!-- Dynamic goal rows here -->
+                          </tbody>
+                        </table>
+                        <p class="info">
+                          💡 You can import goals instead of adding manually.
+                          Download the template → fill in → then import.
+                        </p>
+                      </td>
+                    </tr>
+                  </tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="parallel-options">
+              <div>
+                Secondary Investment<span class="info-icon">
+                  ⓘ
+                  <span class="tooltip">
+                    Could be a goal based separate portfolio, bonds, etc.
+                  </span>
+                </span>
+              </div>
+              <div>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="parallelInvestmentOneToggle"
+                    onchange="toggleParallelInvestment('One');"
+                  />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="child parallelInvestmentOneTable">
+              <div class="form-row">
+                <div>
+                  <label>Starting Year</label>
+                  <select
+                    name="investmentYearOne"
+                    id="investmentYearOne"
+                    class="investmentYearOne"
+                  ></select>
+                </div>
+
+                <div>
+                  <label>Initial Investment (₹)</label>
+                  <input
+                    type="text"
+                    value="100000"
+                    placeholder="Enter initial investment"
+                    class="initialInvestmentOne"
+                    name="initialInvestmentOne"
+                    id="initialInvestmentOne"
+                    oninput="formatIndianNumber(this)"
+                  />
+                </div>
+
+                <div>
+                  <label>Yearly Interest Rate (%)</label>
+                  <input
+                    type="number"
+                    value="10"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="interestRateOne"
+                    name="interestRateOne"
+                    id="interestRateOne"
+                  />
+                </div>
+              </div>
+              <div class="form-group">
+                <label>Compounding Frequency</label>
+                <select
+                  name="compoundingFrequencyOne"
+                  id="compoundingFrequencyOne"
+                  class="compoundingFrequencyOne"
+                >
+                  <option value="12" selected>Monthly</option>
+                  <option value="4">Quarterly</option>
+                  <option value="2">Half-Yearly</option>
+                  <option value="1">Yearly</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label
+                    >Adjust Interest Rate As You Age?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        As you get older your risk appetite might be low and you
+                        would be little conservative.
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="decreaseInterestRateToggleOne"
+                    id="decreaseInterestRateToggleOne"
+                    class="decreaseInterestRateToggleOne"
+                    onchange="toggleDecreaseInterestRate('One');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="decreaseInterestRateRowsOne">
+                  <label
+                    >Change Interest Rate After Years<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years.
+                      </span>
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    placeholder="Enter year"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="decreaseInterestRateAfterYearsOne"
+                  />
+                </div>
+
+                <div class="decreaseInterestRateRowsOne">
+                  <label>Update Interest Rate To (%)</label>
+                  <input
+                    type="number"
+                    placeholder="Enter updated rate"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="updatedInterestRateOne"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label
+                    >Enable SIP<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        A regular deposit plan to invest at a distinct period.
+                      </span>
+                    </span></label
+                  >
+                </div>
+
+                <div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      id="toggleSIPOne"
+                      onchange="toggleSIP('One');"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-row sipOneRows">
+                <div>
+                  <label>Deposit Amount (₹)</label>
+                  <input
+                    type="text"
+                    value="10000"
+                    placeholder="Enter SIP amount"
+                    class="sipOneAmount"
+                    oninput="formatIndianNumber(this)"
+                  />
+                </div>
+
+                <div>
+                  <label>Deposit Frequency</label>
+                  <select
+                    name="investmentOneFrequency"
+                    id="investmentOneFrequency"
+                    class="investmentOneFrequency"
+                  >
+                    <option value="1" selected>Monthly</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row sipOneRows">
+                <div>
+                  <label
+                    >SIP StepUp<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Want to increase deposit every year/quarter/half-yearly?
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="stepUpSIPOne"
+                    id="stepUpSIPOne"
+                    class="stepUpSIPOne"
+                    onchange="toggleStepUpSIP('One');"
+                  >
+                    <option value="0" selected>None</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+                <div class="sipStepUpOneRows">
+                  <label>Increase Deposit By (%)</label>
+                  <input
+                    type="number"
+                    value="5"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="stepUpOneIncreasePercentage"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row sipOneRows">
+                <div>
+                  <label
+                    >Stop SIP after a certain period?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        If you want to stop contributing more and just hold the
+                        investments.
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="stopSIPOne"
+                    id="stopSIPOne"
+                    class="stopSIPOne"
+                    onchange="toggleStopSip('One');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="stopSipOneRows">
+                  <label
+                    >Stop SIP After Years
+                    <span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years.
+                      </span>
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    placeholder="Enter year"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="stopSipOneAfterYears"
+                  />
+                </div>
+              </div>
+            </div>
+            <div class="parallel-options">
+              <div>
+                Tertiary Investment<span class="info-icon">
+                  ⓘ
+                  <span class="tooltip"> Could be PF, FD, etc. </span>
+                </span>
+              </div>
+              <div>
+                <label class="switch">
+                  <input
+                    type="checkbox"
+                    id="parallelInvestmentTwoToggle"
+                    onchange="toggleParallelInvestment('Two');"
+                  />
+                  <span class="slider"></span>
+                </label>
+              </div>
+            </div>
+            <div class="child parallelInvestmentTwoTable">
+              <div class="form-row">
+                <div>
+                  <label>Starting Year</label>
+                  <select
+                    name="investmentYearTwo"
+                    id="investmentYearTwo"
+                    class="investmentYearTwo"
+                  ></select>
+                </div>
+
+                <div>
+                  <label>Initial Investment (₹)</label>
+                  <input
+                    type="text"
+                    value="100000"
+                    placeholder="Enter initial investment"
+                    class="initialInvestmentTwo"
+                    name="initialInvestmentTwo"
+                    id="initialInvestmentTwo"
+                    oninput="formatIndianNumber(this)"
+                  />
+                </div>
+
+                <div>
+                  <label>Yearly Interest Rate (%)</label>
+                  <input
+                    type="number"
+                    value="8"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="interestRateTwo"
+                    name="interestRateTwo"
+                    id="interestRateTwo"
+                  />
+                </div>
+              </div>
+
+              <div class="form-group">
+                <label>Compounding Frequency</label>
+                <select
+                  name="compoundingFrequencyTwo"
+                  id="compoundingFrequencyTwo"
+                  class="compoundingFrequencyTwo"
+                >
+                  <option value="12">Monthly</option>
+                  <option value="4" selected>Quarterly</option>
+                  <option value="2">Half-Yearly</option>
+                  <option value="1">Yearly</option>
+                </select>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label
+                    >Adjust Interest Rate As You Age?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        As you get older your risk appetite might be low and you
+                        would be little conservative.
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="decreaseInterestRateToggleTwo"
+                    id="decreaseInterestRateToggleTwo"
+                    class="decreaseInterestRateToggleTwo"
+                    onchange="toggleDecreaseInterestRate('Two');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="decreaseInterestRateRowsTwo">
+                  <label
+                    >Change Interest Rate After Years<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years.
+                      </span>
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    placeholder="Enter year"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="decreaseInterestRateAfterYearsTwo"
+                  />
+                </div>
+
+                <div class="decreaseInterestRateRowsTwo">
+                  <label>Update Interest Rate To (%)</label>
+                  <input
+                    type="number"
+                    placeholder="Enter updated rate"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="updatedInterestRateTwo"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row">
+                <div>
+                  <label
+                    >Enable SIP<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        A regular deposit plan to invest at a distinct period.
+                      </span>
+                    </span></label
+                  >
+                </div>
+
+                <div>
+                  <label class="switch">
+                    <input
+                      type="checkbox"
+                      id="toggleSIPTwo"
+                      onchange="toggleSIP('Two');"
+                    />
+                    <span class="slider"></span>
+                  </label>
+                </div>
+              </div>
+
+              <div class="form-row sipTwoRows">
+                <div>
+                  <label>Deposit Amount (₹)</label>
+                  <input
+                    type="text"
+                    value="10000"
+                    placeholder="Enter SIP amount"
+                    class="sipTwoAmount"
+                    oninput="formatIndianNumber(this)"
+                  />
+                </div>
+
+                <div>
+                  <label>Deposit Frequency</label>
+                  <select
+                    name="investmentTwoFrequency"
+                    id="investmentTwoFrequency"
+                    class="investmentTwoFrequency"
+                  >
+                    <option value="1" selected>Monthly</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="form-row sipTwoRows">
+                <div>
+                  <label
+                    >SIP StepUp<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Want to increase deposit every year/quarter/half-yearly?
+                      </span>
+                    </span></label
+                  >
+
+                  <select
+                    name="stepUpSIPTwo"
+                    id="stepUpSIPTwo"
+                    class="stepUpSIPTwo"
+                    onchange="toggleStepUpSIP('Two');"
+                  >
+                    <option value="0" selected>None</option>
+                    <option value="3">Quarterly</option>
+                    <option value="6">Half-Yearly</option>
+                    <option value="12">Yearly</option>
+                  </select>
+                </div>
+
+                <div class="sipStepUpTwoRows">
+                  <label>Increase Deposit By (%)</label>
+                  <input
+                    type="number"
+                    value="5"
+                    step="0.1"
+                    min="1"
+                    max="100"
+                    class="stepUpTwoIncreasePercentage"
+                  />
+                </div>
+              </div>
+
+              <div class="form-row sipTwoRows">
+                <div>
+                  <label
+                    >Stop SIP after a certain period?<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        If you want to stop contributing more and just hold the
+                        investments.
+                      </span></span
+                    ></label
+                  >
+                  <select
+                    name="stopSIPTwo"
+                    id="stopSIPTwo"
+                    class="stopSIPTwo"
+                    onchange="toggleStopSip('Two');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="stopSipTwoRows">
+                  <label
+                    >Stop SIP After Years<span class="info-icon"
+                      >ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years.
+                      </span>
+                    </span></label
+                  >
+
+                  <input
+                    type="number"
+                    placeholder="Enter year"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="stopSipTwoAfterYears"
+                  />
+                </div>
+              </div>
+            </div>
+
+            <div class="last-child sticky-buttons">
+              <div class="button_container button calc-button">
+                <div class="left-button">
+                  <button class="calculate-button">Calculate</button>
+
+                  <button class="reset-button" onclick="resetForm()">
+                    <i class="fas fa-refresh"></i>
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="child results-section">
+              <div class="combinedInvestmentOverview">
+                <div class="overviewHeader">
+                  Future Value of your Investment(s)
+                </div>
+                <div class="investmentOverviewGrid">
+                  <div class="statCard">
+                    <span class="label">Total Corpus</span>
+                    <span class="value combinedFutureInvestmentValue">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Deposits</span>
+                    <span class="value combinedTotalDeposit">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Interest Earned</span>
+                    <span class="value combinedTotalInterest">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">
+                      Inflation Adjusted Corpus (<span class="inflation">6</span
+                      >%)
+                    </span>
+                    <span class="value combinedPresentValueOfFutureMoney"
+                      >₹ 0</span
+                    >
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Effective Annual Interest Rate</span>
+                    <span class="value combinedEar">0 %</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total No of Years</span>
+                    <span class="value combinedNoOfYears">0</span>
+                  </div>
+
+                  <div class="statCard showCombinedSIPYears">
+                    <span class="label">SIP Years</span>
+                    <span class="value combinedNoOfYearsSip">0</span>
+                  </div>
+
+                  <div class="statCard showCombinedNoOfYearsSwp">
+                    <span class="label">SWP Years</span>
+                    <span class="value combinedNoOfYearsSwp">0</span>
+                  </div>
+
+                  <div class="statCard showCombinedSWP" id="showSWP">
+                    <span class="label">Total Systematic Withdrawals</span>
+                    <span class="value combinedTotalSWPAmount">₹ 0</span>
+                  </div>
+
+                  <div
+                    class="statCard combinedLumpsumOverview lumpsum-count-combined"
+                  >
+                    <span class="label">Goals</span>
+                    <span class="value noOfLumpsumWithdrawals">0</span>
+                  </div>
+
+                  <div
+                    class="statCard combinedLumpsumOverview lumpsum-amount-combined"
+                  >
+                    <span class="label">Goal Based Withdrawal</span>
+                    <span class="value totalLumpsumWithdrawalAmount">₹ 0</span>
+                  </div>
+
+                  <div class="statCard showCombinedWithdrawal">
+                    <span class="label">Total Withdrawals</span>
+                    <span class="value combinedTotalWithdrawal">₹ 0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="investmentOverview">
+                <div class="overviewHeader">
+                  Future Value of your Primary Investment
+                </div>
+                <div class="investmentOverviewGrid">
+                  <div class="statCard">
+                    <span class="label">Future Value</span>
+                    <span class="value futureInvestmentValue">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Deposits</span>
+                    <span class="value totalDeposit">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Interest Earned</span>
+                    <span class="value totalInterest">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">
+                      Inflation Adjusted Value (<span class="inflation">6</span
+                      >%)
+                    </span>
+                    <span class="value presentValue presentValueOfFutureMoney"
+                      >₹ 0</span
+                    >
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Effective Annual Interest Rate</span>
+                    <span class="value ear">0 %</span>
+                  </div>
+
+                  <div class="statCard individualYears primaryYears">
+                    <span class="label">Total No of Years</span>
+                    <span class="value noOfYears">0</span>
+                  </div>
+
+                  <div class="statCard" id="showNoOfYearsSip">
+                    <span class="label">SIP Years</span>
+                    <span class="value noOfYearsSip">0</span>
+                  </div>
+
+                  <div class="statCard showNoOfYearsSwp">
+                    <span class="label">SWP Years</span>
+                    <span class="value noOfYearsSwp">0</span>
+                  </div>
+
+                  <div class="statCard showIndividualSWP" id="showSWP">
+                    <span class="label">Total Systematic Withdrawals</span>
+                    <span class="value totalSWPAmount">₹ 0</span>
+                  </div>
+
+                  <div class="statCard lumpsumOverview lumpsum-count-primary">
+                    <span class="label">Goals</span>
+                    <span class="value noOfLumpsumWithdrawals">0</span>
+                  </div>
+
+                  <div class="statCard lumpsumOverview lumpsum-amount-primary">
+                    <span class="label">Goal Based Withdrawal</span>
+                    <span class="value totalLumpsumWithdrawalAmount">₹ 0</span>
+                  </div>
+
+                  <div class="statCard showIndividualWithdrawal">
+                    <span class="label">Total Withdrawals</span>
+                    <span class="value totalWithdrawal">₹ 0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="parallelInvestmentOneOverview">
+                <div class="overviewHeader">
+                  Future Value of your Secondary Investment
+                </div>
+                <div class="investmentOverviewGrid">
+                  <div class="statCard">
+                    <span class="label">Future Value</span>
+                    <span class="value futureInvestmentOneValue">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Deposits</span>
+                    <span class="value totalDepositOne">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Interest Earned</span>
+                    <span class="value totalInterestOne">₹ 0</span>
+                  </div>
+
+                  <div class="statCard individualYears secondaryYears">
+                    <span class="label">Total No of Years</span>
+                    <span class="value noOfYearsOne">0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">
+                      Inflation Adjusted Value (<span class="inflation">6</span
+                      >%)
+                    </span>
+                    <span
+                      class="value presentValue presentValueOfFutureMoneyParallelInvestmentOneValue"
+                      >₹ 0</span
+                    >
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Effective Annual Interest Rate</span>
+                    <span class="value earOne">0 %</span>
+                  </div>
+
+                  <div class="statCard showSIPOne">
+                    <span class="label">SIP Years</span>
+                    <span class="value noOfYearsSipOne">0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="parallelInvestmentTwoOverview">
+                <div class="overviewHeader">
+                  Future Value of your Tertiary Investment
+                </div>
+                <div class="investmentOverviewGrid">
+                  <div class="statCard">
+                    <span class="label">Future Value</span>
+                    <span class="value futureInvestmentTwoValue">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Deposits</span>
+                    <span class="value totalDepositTwo">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Total Interest Earned</span>
+                    <span class="value totalInterestTwo">₹ 0</span>
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">
+                      Inflation Adjusted Value (<span class="inflation">6</span
+                      >%)
+                    </span>
+                    <span
+                      class="value presentValue presentValueOfFutureMoneyParallelInvestmentTwoValue"
+                      >₹ 0</span
+                    >
+                  </div>
+
+                  <div class="statCard">
+                    <span class="label">Effective Annual Interest Rate</span>
+                    <span class="value earTwo">0 %</span>
+                  </div>
+
+                  <div class="statCard individualYears terniaryYears">
+                    <span class="label">Total No of Years</span>
+                    <span class="value noOfYearsTwo">0</span>
+                  </div>
+
+                  <div class="statCard showSIPTwo">
+                    <span class="label">SIP Years</span>
+                    <span class="value noOfYearsSipTwo">0</span>
+                  </div>
+                </div>
+              </div>
+              <div class="spacer"></div>
+              <div class="downloadButtons">
+                <div class="resultNumberWrapper">
+                  <button
+                    class="yearMonthToggleBtn active"
+                    id="yearly-data"
+                    style="margin-right: 10px"
+                    onclick="showYearlyData()"
+                  >
+                    Yearly View
+                  </button>
+                  <button
+                    class="yearMonthToggleBtn"
+                    id="monthly-data"
+                    style="margin-right: 10px"
+                    onclick="showMonthlyData()"
+                  >
+                    Monthly View
+                  </button>
+                  <button
+                    class="downloadCalculations"
+                    id="downloadCalculations"
+                  >
+                    <!-- &#10515; -->
+                    <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 64 64">
+                      <path
+                        d="M55 14h-6.51a1 1 0 0 0 0 2H55a7.009 7.009 0 0 1 7 7v31a3 3 0 1 1-6 0V23a1 1 0 0 0-1-1h-9a1 1 0 0 0 0 2h8v30a4.977 4.977 0 0 0 1.026 3H5a3 3 0 0 1-3-3V16a3 3 0 0 1 3-3h11.945a5.015 5.015 0 0 1 4.043 2.059l5 6.881A5.016 5.016 0 0 0 30.037 24H33v7h-5a1 1 0 0 0-.707 1.707l10 10a1 1 0 0 0 1.414 0l10-10A1 1 0 0 0 48 31h-5v-8c0-7.053 5.65-16 12-16a1 1 0 0 0 0-2c-9.38 0-16.3 3.3-19.68 9H28a1 1 0 0 0 0 2h6.337a17.829 17.829 0 0 0-1.289 6h-3.011a3.013 3.013 0 0 1-2.427-1.235l-5-6.882A7.018 7.018 0 0 0 16.945 11H5a5.006 5.006 0 0 0-5 5v38a5.006 5.006 0 0 0 5 5h54a5.006 5.006 0 0 0 5-5V23a9.01 9.01 0 0 0-9-9zm-6.911-6.229A21.84 21.84 0 0 0 41 23v9a1 1 0 0 0 1 1h3.586L38 40.586 30.414 33H34a1 1 0 0 0 1-1v-9c0-8.971 5.975-13.551 13.089-15.229z"
+                        style="fill: #ffffff"
+                        data-name="Open Folder"
+                      />
+                    </svg>
+                  </button>
+                </div>
+              </div>
+              <div
+                class="mobile-only"
+                style="padding-top: 15px; font-size: 12px; text-align: center"
+              >
+                This table is best viewed in desktop or tablet. Large data might
+                NOT fit the screen.
+              </div>
+              <div class="monthly-data">
+                <div
+                  class="combined-table hidden"
+                  id="monthlyResultTableForCombinedView"
+                ></div>
+                <div id="monthlyResultTable"></div>
+                <div id="monthlyResultTableForParallelInvestmentOne"></div>
+                <div id="monthlyResultTableForParallelInvestmentTwo"></div>
+              </div>
+              <div class="yearly-data">
+                <div
+                  class="combined-table hidden"
+                  id="yearlyResultTableForCombinedView"
+                ></div>
+                <div id="yearlyResultTable"></div>
+                <div id="yearlyResultTableForParallelInvestmentOne"></div>
+                <div id="yearlyResultTableForParallelInvestmentTwo"></div>
+              </div>
+            </div>
+          </div>
+        </section>
+        <section id="tax-calculator" class="calculator">
+          <div class="child">
+            <div class="resultHeader">Salary Breakup</div>
+
+            <div class="overviewHeader extra-top">Base Component</div>
+            <div class="form-row">
+              <div class="desktop-only">
+                <label>Basic - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="basic-annual"
+                  id="basic-annual"
+                  name="basic-annual"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); calculateEpf(); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+              <div>
+                <label>Basic - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="basic-monthly"
+                  id="basic-monthly"
+                  name="basic-monthly"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); calculateEpf(); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="desktop-only">
+                <label>HRA - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="hra-annual"
+                  id="hra-annual"
+                  name="hra-annual"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+              <div>
+                <label>HRA - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="hra-monthly"
+                  id="hra-monthly"
+                  name="hra-monthly"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="desktop-only">
+                <label>Other Allowances - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="other-allowances-1-annual"
+                  id="other-allowances-1-annual"
+                  name="other-allowances-1-annual"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+              <div>
+                <label>Other Allowances - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="other-allowances-1-monthly"
+                  id="other-allowances-1-monthly"
+                  name="other-allowances-1-monthly"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="desktop-only">
+                <label>Other Allowances - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="other-allowances-2-annual"
+                  id="other-allowances-2-annual"
+                  name="other-allowances-2-annual"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+              <div>
+                <label>Other Allowances - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="other-allowances-2-monthly"
+                  id="other-allowances-2-monthly"
+                  name="other-allowances-2-monthly"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+            </div>
+
+            <div class="separator"></div>
+
+            <div class="overviewHeader">Retirals</div>
+            <div class="form-row">
+              <div class="desktop-only">
+                <label>Employer Contribution to PF - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="employer-pf-annual"
+                  id="employer-pf-annual"
+                  name="employer-pf-annual"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+              <div>
+                <label>Employer Contribution to PF - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="employer-pf-monthly"
+                  id="employer-pf-monthly"
+                  name="employer-pf-monthly"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div class="desktop-only">
+                <label>Gratuity - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="gratuity-annual"
+                  id="gratuity-annual"
+                  name="gratuity-annual"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+              <div>
+                <label>Gratuity - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="gratuity-monthly"
+                  id="gratuity-monthly"
+                  name="gratuity-monthly"
+                  placeholder="0"
+                  oninput="updateBasicValues(this.className); formatIndianNumberAndCalculateTotal(this); "
+                />
+              </div>
+            </div>
+            <div class="separator"></div>
+            <div class="overviewHeader">Total</div>
+            <div class="form-row">
+              <div>
+                <label>Total CTC - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="total-sal-annual"
+                  id="total-sal-annual"
+                  name="total-sal-annual"
+                  placeholder="0"
+                  disabled
+                />
+              </div>
+              <div>
+                <label>Total CTC - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="total-sal-monthly"
+                  id="total-sal-monthly"
+                  name="total-sal-monthly"
+                  placeholder="0"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label>Total Taxable Salary - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="total-taxable-annual"
+                  id="total-taxable-annual"
+                  name="total-taxable-annual"
+                  placeholder="0"
+                  disabled
+                />
+              </div>
+              <div>
+                <label>Total Taxable Salary - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="total-taxable-monthly"
+                  id="total-taxable-monthly"
+                  name="total-taxable-monthly"
+                  placeholder="0"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <!-- Deduction Details Section -->
+            <div class="resultHeader">Deduction Details</div>
+
+            <div class="form-row extra-top">
+              <div>
+                <label>Professional Tax - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="professional-tax"
+                  id="professional-tax"
+                  name="professional-tax"
+                  value="200"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label>Welfare Contribution - Monthly (&#8377;)</label>
+                <input
+                  type="text"
+                  class="welfare-contribution"
+                  id="welfare-contribution"
+                  name="welfare-contribution"
+                  value="100"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="overviewHeader">
+              80C (Maximum Deduction is 1.5 Lakhs)
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label>Employee Contribution to PF - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="epf"
+                  id="epf"
+                  name="epf"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label>PPF - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="ppf"
+                  id="ppf"
+                  name="ppf"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label>NPS - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="nps"
+                  id="nps"
+                  name="nps"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label>ELSS - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="elss"
+                  id="elss"
+                  name="elss"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label>LIC or Life Insurance Premium - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="life-insurance-premium"
+                  id="life-insurance-premium"
+                  name="life-insurance-premium"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label>Home Loan Principal Payment - Annual (&#8377;)</label>
+                <input
+                  type="text"
+                  class="home-loan-principal"
+                  id="home-loan-principal"
+                  name="home-loan-principal"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="overviewHeader">
+              Deductions for Home Loan Interest Payment
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label
+                  >Section 24 (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip">
+                      >(Maximum Deduction is 2 Lakhs)</span
+                    ></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="home-loan-interest"
+                  id="home-loan-interest"
+                  name="home-loan-interest"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label
+                  >80EEA (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip">
+                      Maximum Deduction is 1.5 Lakhs - Conditions: Stamp duty
+                      value of the house must be 45 lakhs or less. Loan must be
+                      taken between Apr 2019 to Mar 2022 and should NOT own any
+                      other residential property at the time of loan sanction.
+                      Only one of 80EE or 80EEA can be claimed; not both.
+                    </span>
+                  </span>
+                </label>
+                <input
+                  type="text"
+                  class="home-loan-interest-additional"
+                  id="home-loan-interest-additional"
+                  name="home-loan-interest-additional"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label
+                  >80EE (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip"
+                      >Maximum Deduction is 50K - Conditions: House value must
+                      be 50 lakhs or less. Loan value must be 35 lakhs or less.
+                      Loan must be taken between Apr 2016 to Mar 2017 and should
+                      NOT own any other residential property at the time of loan
+                      sanction. Only one of 80EE or 80EEA can be claimed; not
+                      both.</span
+                    ></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="home-loan-interest-additionall"
+                  id="home-loan-interest-additionall"
+                  name="home-loan-interest-additionall"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="overviewHeader">House Rent Allowance</div>
+            <div class="form-row">
+              <div>
+                <label>Rent per Month (&#8377;)</label>
+                <input
+                  type="text"
+                  class="rent"
+                  id="rent"
+                  name="rent"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label
+                  >Are you a resident of Delhi, Mumbai, Kolkata or
+                  Chennai?</label
+                ><select name="metro-city" id="metro-city" class="metro-city">
+                  <option value="0" selected>No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="form-group">
+              <div>
+                <label
+                  >HRA Exemption Amount (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip"
+                      >The lowest of the following three amounts is eligible for
+                      tax exemption<br />
+                      • Actual HRA received<br />
+                      • Rent paid minus 10% of Basic Salary<br />
+                      • 50% (for metro city) or 40% (for non-metro city) of the
+                      Basic Salary.</span
+                    ></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="hra-exemption"
+                  id="hra-exemption"
+                  name="hra-exemption"
+                  placeholder="0"
+                  disabled
+                />
+              </div>
+            </div>
+
+            <div class="overviewHeader">80D (Health Insurance Premium)</div>
+
+            <div class="form-row">
+              <div>
+                <label
+                  >Self & Family (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip">Maximum Deduction is 25K</span></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="health-prem-self"
+                  id="health-prem-self"
+                  name="health-prem-self"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label
+                  >Parents (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip">Maximum Deduction is 25K</span></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="health-prem-parents"
+                  id="health-prem-parents"
+                  name="health-prem-parents"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="overviewHeader">80E</div>
+
+            <div class="form-row">
+              <div>
+                <label>Interest Paid of Education Loan (&#8377;)</label>
+                <input
+                  type="text"
+                  class="education-loan"
+                  id="education-loan"
+                  name="education-loan"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="overviewHeader">NPS - 80CCD(1B) & 80CCD(2)</div>
+
+            <div class="form-row">
+              <div>
+                <label
+                  >Employee Contribution to NPS (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip">Maximum Deduction is 50K</span></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="nps-self"
+                  id="nps-self"
+                  name="nps-self"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+              <div>
+                <label
+                  >Employer Contribution to NPS (&#8377;)
+                  <span class="info-icon">
+                    ⓘ
+                    <span class="tooltip">
+                      (Maximum Deduction is 10% of Basic + DA for Private
+                      Employee and 14% of Basic + DA for Government
+                      Employee)</span
+                    ></span
+                  >
+                </label>
+                <input
+                  type="text"
+                  class="nps-employer"
+                  id="nps-employer"
+                  name="nps-employer"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+
+            <div class="form-row">
+              <div>
+                <label>Are you a Central/State Government Employee?</label>
+                <select
+                  name="govt-employee"
+                  id="govt-employee"
+                  class="govt-employee"
+                >
+                  <option value="0" selected>No</option>
+                  <option value="1">Yes</option>
+                </select>
+              </div>
+            </div>
+
+            <div class="overviewHeader">80G</div>
+
+            <div class="form-row">
+              <div>
+                <label>Donations to Charity (&#8377;)</label>
+                <input
+                  type="text"
+                  class="donations"
+                  id="donations"
+                  name="donations"
+                  placeholder="0"
+                  oninput="formatIndianNumber(this);"
+                />
+              </div>
+            </div>
+          </div>
+          <div class="last-child sticky-buttons">
+            <div class="button_container button calc-button">
+              <div class="left-button">
+                <button class="calculate-button">Calculate</button>
+
+                <button class="reset-button" onclick="resetTaxForm();">
+                  <i class="fas fa-refresh"></i>
+                </button>
+              </div>
+            </div>
+          </div>
+          <div class="calculations hidden">
+            <div class="resultHeader" id="tds-header">TDS</div>
+            <div class="result-section">
+              <div class="result-item equal-spans">
+                <span class="result-label"></span>
+                <span class="result-value">Annual</span>
+                <span class="result-value">Monthly</span>
+              </div>
+              <div class="result-item equal-spans">
+                <span class="result-label">Old</span>
+                <span class="result-value"
+                  ><span
+                    class="tax-old-regime-annual"
+                    id="tax-old-regime-annual"
+                    name="tax-old-regime-annual"
+                  ></span
+                ></span>
+                <span class="result-value"
+                  ><span
+                    class="tax-old-regime-monthly"
+                    id="tax-old-regime-monthly"
+                    name="tax-old-regime-monthly"
+                  ></span
+                ></span>
+              </div>
+              <div class="result-item equal-spans">
+                <span class="result-label">New</span>
+                <span class="result-value"
+                  ><span
+                    class="tax-new-regime-annual"
+                    id="tax-new-regime-annual"
+                    name="tax-new-regime-annual"
+                  ></span
+                ></span>
+                <span class="result-value"
+                  ><span
+                    class="tax-new-regime-monthly"
+                    id="tax-new-regime-monthly"
+                    name="tax-new-regime-monthly"
+                  ></span
+                ></span>
+              </div>
+            </div>
+            <div class="resultHeader" id="take-home-header">Take Home</div>
+            <div class="result-section">
+              <div class="result-item equal-spans">
+                <span class="result-label"></span>
+                <span class="result-value">Annual</span>
+                <span class="result-value">Monthly</span>
+              </div>
+              <div class="result-item equal-spans">
+                <span class="result-label">Old</span>
+                <span class="result-value"
+                  ><span
+                    class="take-home-old-regime-annual"
+                    id="take-home-old-regime-annual"
+                    name="take-home-old-regime-annual"
+                  ></span
+                ></span>
+                <span class="result-value"
+                  ><span
+                    class="take-home-old-regime-monthly"
+                    id="take-home-old-regime-monthly"
+                    name="take-home-old-regime-monthly"
+                  ></span
+                ></span>
+              </div>
+              <div class="result-item equal-spans">
+                <span class="result-label">New</span>
+                <span class="result-value"
+                  ><span
+                    class="take-home-new-regime-annual"
+                    id="take-home-new-regime-annual"
+                    name="take-home-new-regime-annual"
+                  ></span
+                ></span>
+                <span class="result-value"
+                  ><span
+                    class="take-home-new-regime-monthly"
+                    id="take-home-new-regime-monthly"
+                    name="take-home-new-regime-monthly"
+                  ></span
+                ></span>
+              </div>
+            </div>
+
+            <div class="suggestion"></div>
+
+            <div class="payslip-section">
+              <div class="resultHeader" id="payslip-header"></div>
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Basic</span>
+                  <span class="result-value green" id="payslip-basic">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">HRA</span>
+                  <span class="result-value green" id="payslip-hra">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Other Allowances</span>
+                  <span class="result-value green" id="payslip-other-1"
+                    >₹0</span
+                  >
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Other Allowances</span>
+                  <span class="result-value green" id="payslip-other-2"
+                    >₹0</span
+                  >
+                </div>
+                <div class="result-item">
+                  <span class="result-label">PF</span>
+                  <span class="result-value red" id="payslip-pf">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Professional Tax</span>
+                  <span class="result-value red" id="payslip-pro-tax">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Employee Welfare</span>
+                  <span
+                    class="result-value red"
+                    id="payslip-welfare-contribution"
+                    >₹0</span
+                  >
+                </div>
+                <div class="result-item">
+                  <span class="result-label">TDS</span>
+                  <span class="result-value red" id="payslip-tds">₹0</span>
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Take Home Salary</span>
+                  <span class="result-value green" id="payslip-total">₹0</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
-
-    <script src="script.js"></script>
+    <script>
+      // Splash screen logic
+      window.addEventListener("load", function () {
+        const splash = document.getElementById("splash-screen");
+        setTimeout(function () {
+          splash.classList.add("fade-out");
+          setTimeout(function () {
+            splash.remove();
+          }, 500);
+        }, 500);
+      });
+    </script>
     <script src="calculators.js"></script>
     <script src="data-handler.js"></script>
     <script src="charts.js"></script>
     <script src="alerts.js"></script>
+    <script src="adv-calculator.js"></script>
+    <script src="tax-calculator.js"></script>
+    <script src="script.js"></script>
   </body>
 </html>

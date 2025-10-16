@@ -1,6 +1,6 @@
 {
   "name": "Financial Calculator by Pabitra",
-  "short_name": "FinancialCalculator",
+  "short_name": "FinCalc",
   "start_url": "./index.html",
   "display": "standalone",
   "background_color": "#ffffff",
@@ -8,13 +8,8 @@
   "orientation": "portrait",
   "icons": [
     {
-      "src": "icons/icon-128.png",
-      "sizes": "128x128",
-      "type": "image/png"
-    },
-    {
-      "src": "icons/icon-256.png",
-      "sizes": "256x256",
+      "src": "icons/icon-192.png",
+      "sizes": "192x192",
       "type": "image/png"
     },
     {
