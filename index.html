@@ -70,11 +70,11 @@
         <img src="icons/icon-192.png" alt="Logo" class="splash-icon" />
         <h1 class="splash-title">Financial Calculator</h1>
         <p class="splash-subtitle">Plan your finances smartly</p>
-      </div>
-      <div class="splash-loader">
-        <div class="bubble"></div>
-        <div class="bubble"></div>
-        <div class="bubble"></div>
+        <div class="splash-loader">
+          <div class="bubble"></div>
+          <div class="bubble"></div>
+          <div class="bubble"></div>
+        </div>
       </div>
     </div>
     <div class="app-container">
@@ -3494,29 +3494,15 @@
       </main>
     </div>
     <script>
-      window.addEventListener("load", () => {
+      // Splash screen logic
+      window.addEventListener("load", function () {
         const splash = document.getElementById("splash-screen");
-        const content = splash.querySelector(".splash-content");
-
-        // Wait for images to load
-        const imgs = content.querySelectorAll("img");
-        const imgPromises = Array.from(imgs).map((img) =>
-          img.complete
-            ? Promise.resolve()
-            : new Promise((res) => (img.onload = res))
-        );
-
-        Promise.all(imgPromises).then(() => {
-          // Fade in content
-          content.style.visibility = "visible";
-          content.style.opacity = "1";
-
-          // Keep splash for 1s then fade out
-          setTimeout(() => {
-            splash.classList.add("fade-out");
-            setTimeout(() => splash.remove(), 600);
-          }, 1000);
-        });
+        setTimeout(function () {
+          splash.classList.add("fade-out");
+          setTimeout(function () {
+            splash.remove();
+          }, 500);
+        }, 500);
       });
     </script>
     <script src="calculators.js"></script>
