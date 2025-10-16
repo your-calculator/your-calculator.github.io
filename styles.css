@@ -2133,6 +2133,9 @@ td.no-height {
   flex-direction: column;
   align-items: center;
   justify-content: center;
+  opacity: 0;
+  visibility: hidden;
+  transition: opacity 0.3s ease;
 }
 
 .splash-icon {
