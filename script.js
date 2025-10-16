@@ -1,5 +1,4 @@
 let amortizationData = [];
-
 const calculatorTitles = {
   "loan-emi": {
     title: "Loan EMI Calculator",
@@ -53,42 +52,15 @@ const calculatorTitles = {
     title: "Emergency Fund Calculator",
     desc: "Plan your emergency fund savings",
   },
+  "investment-calculator": {
+    title: "Advanced Investment Calculator",
+    desc: "Comprehensive investment planning with SIP, SWP, and goals",
+  },
+  "tax-calculator": {
+    title: "Tax Calculator",
+    desc: "Calculate Tax Liability, Copmare Regimes and Opt the right regime that suits your needs.",
+  },
 };
-
-// ---------- Reset function ----------
-function resetAll() {
-  // Clear localStorage
-  localStorage.clear();
-
-  // Clear all input fields
-  document.querySelectorAll("input").forEach((input) => (input.value = ""));
-
-  // Clear charts
-  if (window.charts) {
-    window.charts.forEach((chart) => chart.destroy());
-    window.charts = [];
-  }
-
-  location.reload();
-}
-
-function resetSection(sectionId) {
-  // Clear all visible inputs in this section
-  document.querySelectorAll("#" + sectionId + " input").forEach((input) => {
-    if (input.offsetParent !== null) {
-      input.value = "";
-      input.classList.remove("input-error");
-    }
-  });
-
-  // Clear charts if window.charts exist (optional: filter charts by section)
-  if (window.charts) {
-    window.charts.forEach((chart) => chart.destroy());
-    window.charts = [];
-  }
-  saveInputs();
-  location.reload();
-}
 
 // Toggle mobile menu
 function toggleMenu() {
@@ -146,6 +118,10 @@ function showCalculator(id, navItem) {
     .querySelectorAll(".calculator")
     .forEach((c) => c.classList.remove("active"));
 
+  document
+    .querySelectorAll(".input-error")
+    .forEach((el) => el.classList.remove("input-error"));
+
   // Remove active from nav
   document
     .querySelectorAll(".nav-item")
@@ -176,7 +152,61 @@ function showCalculator(id, navItem) {
 
   // Auto-calculate after switching tabs
   setTimeout(() => calculateActive(id), 100);
+
+  history.replaceState(null, null, "#" + id);
 }
+
+function activateCalculatorFromHash() {
+  const hash = window.location.hash.substring(1); // remove '#'
+  if (hash && document.getElementById(hash)) {
+    const navItem = document.querySelector(`[onclick*="${hash}"]`);
+    showCalculator(hash, navItem);
+  }
+}
+
+// Enforce min/max constraints on all number inputs
+function enforceMinMax() {
+  const numberInputs = document.querySelectorAll('input[type="number"]');
+
+  numberInputs.forEach((input) => {
+    input.addEventListener("input", function () {
+      let value = this.value;
+      const min = parseFloat(this.min);
+      const max = parseFloat(this.max);
+
+      // Remove all minus signs except the first character
+      const hasNegative = value.startsWith("-");
+      value = value.replace(/-/g, "");
+      if (hasNegative) {
+        value = "-" + value;
+      }
+
+      this.value = value; // Update immediately to clean up input
+
+      const numValue = parseFloat(value);
+
+      if (!isNaN(numValue)) {
+        if (!isNaN(min) && numValue < min) {
+          this.value = min;
+        } else if (!isNaN(max) && numValue > max) {
+          this.value = max;
+        }
+      }
+    });
+  });
+}
+
+// Run when DOM is ready
+document.addEventListener("DOMContentLoaded", enforceMinMax);
+
+// Also run if you dynamically add inputs later
+// Just call enforceMinMax() after adding new inputs
+
+// Run when DOM is ready
+document.addEventListener("DOMContentLoaded", enforceMinMax);
+
+// Also run if you dynamically add inputs later
+// Just call enforceMinMax() after adding new inputs
 
 // ---------- Init ----------
 window.addEventListener("DOMContentLoaded", () => {
@@ -187,10 +217,13 @@ window.addEventListener("DOMContentLoaded", () => {
   calculateAll();
 
   // Restore active tab
+  // Activate calculator from URL hash first, fallback to saved tab
+  activateCalculatorFromHash();
+
   const savedTab = localStorage.getItem("activeCalculator");
-  if (savedTab) {
+  if (!window.location.hash && savedTab && document.getElementById(savedTab)) {
     const navItem = document.querySelector(`[onclick*="${savedTab}"]`);
-    if (navItem) showCalculator(savedTab, navItem);
+    showCalculator(savedTab, navItem);
   }
 
   // Debounced auto-calc on any input change
@@ -203,7 +236,58 @@ window.addEventListener("DOMContentLoaded", () => {
   document.querySelectorAll("input").forEach((input) => {
     input.addEventListener("input", debouncedCalc);
   });
+
+  initYearDropdown();
+  initializeOldApp();
 });
+
+// Handle browser back/forward hash changes
+window.addEventListener("hashchange", () => {
+  activateCalculatorFromHash();
+});
+
+document
+  .querySelectorAll('input[type="number"], input[type="text"]')
+  .forEach((input) => {
+    // --- Trim leading zeros live ---
+    input.addEventListener("input", () => {
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
+      let value = input.value;
+
+      // Skip if empty or starts with valid 0. / -0.
+      if (value !== "" && !/^(-?)0\./.test(value)) {
+        const newValue = value.replace(/^(-?)0+(?=\d)/, "$1");
+        if (newValue !== value) {
+          input.value = newValue;
+          const diff = value.length - newValue.length;
+          input.setSelectionRange(start - diff, end - diff);
+        }
+      }
+    });
+
+    // --- Normalize on blur ---
+    input.addEventListener("blur", () => {
+      let value = input.value.trim();
+      if (value === "") return;
+
+      // Only normalize if it's a valid numeric string
+      const num = Number(value);
+      if (!isNaN(num)) {
+        // Use parseFloat to remove trailing zeros but keep decimals
+        value = parseFloat(num.toString()).toString();
+
+        // If user entered something like "12." → keep the dot (optional)
+        if (/\.$/.test(input.value)) {
+          input.value = input.value; // leave as is
+        } else {
+          input.value = value;
+        }
+      }
+    });
+  });
+
+document.addEventListener("DOMContentLoaded", enforceMinMax);
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {

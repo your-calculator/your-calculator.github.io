@@ -1,8 +1,8 @@
 const ICONS = {
-  success: "✔",
-  error: "✖",
-  warning: "⚠",
-  info: "ⓘ",
+  success: "✅",
+  error: "❌",
+  warning: "⚠️",
+  info: "ℹ️",
 };
 
 // === Toast utility ===

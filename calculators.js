@@ -1,22 +1,119 @@
+// Indian number formatter for oninput attribute
+function formatIndianNumber(input) {
+  const cursorPosition = input.selectionStart;
+  const oldValue = input.value;
+  const oldLength = oldValue.length;
+
+  // Remove existing commas
+  let value = input.value.replace(/,/g, "");
+
+  // Remove non-numeric characters
+  value = value.replace(/[^\d]/g, "");
+
+  // Remove leading zeros (but keep single 0)
+  value = value.replace(/^0+(?!$)/, "");
+
+  if (!value) {
+    input.value = "";
+    return;
+  }
+
+  // Format according to Indian numbering system
+  let formattedValue = "";
+  if (value.length <= 3) {
+    formattedValue = value;
+  } else {
+    const lastThree = value.slice(-3);
+    const remaining = value.slice(0, -3);
+    const formatted = remaining.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+    formattedValue = formatted + "," + lastThree;
+  }
+
+  input.value = formattedValue;
+
+  // Adjust cursor position
+  const newLength = formattedValue.length;
+  const addedChars = newLength - oldLength;
+  let newPosition = cursorPosition + addedChars;
+
+  if (newPosition > 0 && formattedValue[newPosition - 1] === ",") {
+    newPosition++;
+  }
+
+  input.setSelectionRange(newPosition, newPosition);
+}
+
+function formatIndianNumberFromData(data) {
+  const value = Math.abs(data).toString();
+
+  if (value.length <= 3) return value;
+
+  const lastThree = value.slice(-3);
+  const remaining = value.slice(0, -3);
+  const formattedRemaining = remaining.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
+
+  return formattedRemaining + "," + lastThree;
+}
+
+// International number formatter (1,000,000)
+function formatInternationalNumber(input) {
+  const cursorPosition = input.selectionStart;
+  const oldValue = input.value;
+  const oldLength = oldValue.length;
+
+  let value = input.value.replace(/,/g, "");
+  value = value.replace(/[^\d]/g, "");
+  value = value.replace(/^0+(?!$)/, ""); // strip leading zeros
+
+  if (!value) {
+    input.value = "";
+    return;
+  }
+
+  const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  input.value = formattedValue;
+
+  const newLength = formattedValue.length;
+  const addedChars = newLength - oldLength;
+  let newPosition = cursorPosition + addedChars;
+
+  if (newPosition > 0 && formattedValue[newPosition - 1] === ",") {
+    newPosition++;
+  }
+
+  input.setSelectionRange(newPosition, newPosition);
+}
+
+function getNumericValue(selector) {
+  return (
+    parseFloat(document.querySelector(selector).value.replace(/,/g, "")) || 0
+  );
+}
+
+function getNumericValueFromText(text) {
+  return parseFloat(text.replace(/,/g, "")) || 0;
+}
+
 function validateInputs(inputIds) {
   const inputs = inputIds.map((id) => document.getElementById(id));
   let allValid = true;
 
   inputs.forEach((input) => {
-    const value = parseFloat(input.value); // convert to number
+    // Remove commas before parsing
+    const value = getNumericValueFromText(input.value);
     if (!input.value || isNaN(value) || value <= 0) {
-      input.classList.add("input-error"); // highlight invalid input
+      input.classList.add("input-error");
       allValid = false;
     } else {
-      input.classList.remove("input-error"); // remove highlight if valid
+      input.classList.remove("input-error");
     }
   });
 
   if (!allValid) {
-    // Focus the first invalid input
-    const firstInvalid = inputs.find(
-      (input) => !input.value || parseFloat(input.value) <= 0
-    );
+    const firstInvalid = inputs.find((input) => {
+      const value = getNumericValueFromText(input.value);
+      return !input.value || isNaN(value) || value <= 0;
+    });
     if (firstInvalid) firstInvalid.focus();
     return false;
   }
@@ -28,7 +125,9 @@ function validateInputs(inputIds) {
 function calculateLoanEMI() {
   const allFilled = validateInputs(["loan-amount", "loan-rate", "loan-tenure"]);
   if (!allFilled) return;
-  const principal = parseFloat(document.getElementById("loan-amount").value);
+  const principal = getNumericValueFromText(
+    document.getElementById("loan-amount").value
+  );
   const annualRate = parseFloat(document.getElementById("loan-rate").value);
   const tenureType = document.getElementById("loan-tenure-type").value;
   const tenure = parseFloat(document.getElementById("loan-tenure").value);
@@ -155,7 +254,9 @@ function renderAmortizationTable() {
 function calculateFD() {
   const allFilled = validateInputs(["fd-principal", "fd-rate", "fd-years"]);
   if (!allFilled) return;
-  const principal = parseFloat(document.getElementById("fd-principal").value);
+  const principal = getNumericValueFromText(
+    document.getElementById("fd-principal").value
+  );
   const rate = parseFloat(document.getElementById("fd-rate").value);
   const years = parseFloat(document.getElementById("fd-years").value);
   const compounding = parseInt(
@@ -188,7 +289,7 @@ function calculateFD() {
 function calculateRD() {
   const allFilled = validateInputs(["rd-monthly", "rd-rate", "rd-years"]);
   if (!allFilled) return;
-  const monthlyDeposit = parseFloat(
+  const monthlyDeposit = getNumericValueFromText(
     document.getElementById("rd-monthly").value
   );
   const annualRate = parseFloat(document.getElementById("rd-rate").value);
@@ -227,7 +328,9 @@ function calculateInflation() {
     "inflation-years",
   ]);
   if (!allFilled) return;
-  const amount = parseFloat(document.getElementById("inflation-amount").value);
+  const amount = getNumericValueFromText(
+    document.getElementById("inflation-amount").value
+  );
   const rate = parseFloat(document.getElementById("inflation-rate").value);
   const years = parseFloat(document.getElementById("inflation-years").value);
 
@@ -249,7 +352,7 @@ function calculateInflation() {
 function calculateFutureValue() {
   const allFilled = validateInputs(["fv-present-value", "fv-rate", "fv-years"]);
   if (!allFilled) return;
-  const presentValue = parseFloat(
+  const presentValue = getNumericValueFromText(
     document.getElementById("fv-present-value").value
   );
   const rate = parseFloat(document.getElementById("fv-rate").value);
@@ -278,7 +381,7 @@ function calculateFutureValue() {
 function calculatePresentValue() {
   const allFilled = validateInputs(["pv-future-value", "pv-rate", "pv-years"]);
   if (!allFilled) return;
-  const futureValue = parseFloat(
+  const futureValue = getNumericValueFromText(
     document.getElementById("pv-future-value").value
   );
   const rate = parseFloat(document.getElementById("pv-rate").value);
@@ -298,7 +401,9 @@ function calculatePresentValue() {
 function calculateSimpleInterest() {
   const allFilled = validateInputs(["si-principal", "si-rate", "si-years"]);
   if (!allFilled) return;
-  const principal = parseFloat(document.getElementById("si-principal").value);
+  const principal = getNumericValueFromText(
+    document.getElementById("si-principal").value
+  );
   const rate = parseFloat(document.getElementById("si-rate").value);
   const years = parseFloat(document.getElementById("si-years").value);
 
@@ -318,7 +423,9 @@ function calculateSimpleInterest() {
 function calculateCompoundInterest() {
   const allFilled = validateInputs(["ci-principal", "ci-rate", "ci-years"]);
   if (!allFilled) return;
-  const principal = parseFloat(document.getElementById("ci-principal").value);
+  const principal = getNumericValueFromText(
+    document.getElementById("ci-principal").value
+  );
   const rate = parseFloat(document.getElementById("ci-rate").value);
   const years = parseFloat(document.getElementById("ci-years").value);
   const frequency = parseInt(document.getElementById("ci-frequency").value, 10);
@@ -361,8 +468,8 @@ function calculateSIP() {
   const stepupEl = document.getElementById("sip-stepup");
 
   // Parse inputs (use 0 defaults where appropriate)
-  const initialInvestment = initialEl ? parseFloat(initialEl.value) || 0 : 0;
-  const monthlyAmount = parseFloat(amountEl.value);
+  const initialInvestment = getNumericValueFromText(initialEl.value);
+  const monthlyAmount = getNumericValueFromText(amountEl.value);
   const annualRate = parseFloat(rateEl.value);
   const years = parseFloat(yearsEl.value);
   const stepupType = stepupTypeEl.value;
@@ -462,10 +569,10 @@ function calculateSWP() {
     "swp-years",
   ]);
   if (!allFilled) return;
-  const initialAmount = parseFloat(
+  const initialAmount = getNumericValueFromText(
     document.getElementById("swp-initial").value
   );
-  const monthlyWithdrawal = parseFloat(
+  const monthlyWithdrawal = getNumericValueFromText(
     document.getElementById("swp-withdrawal").value
   );
   const annualRate = parseFloat(document.getElementById("swp-rate").value);
@@ -529,7 +636,9 @@ function calculateLumpsum() {
     "lumpsum-years",
   ]);
   if (!allFilled) return;
-  const amount = parseFloat(document.getElementById("lumpsum-amount").value);
+  const amount = getNumericValueFromText(
+    document.getElementById("lumpsum-amount").value
+  );
   const rate = parseFloat(document.getElementById("lumpsum-rate").value);
   const years = parseFloat(document.getElementById("lumpsum-years").value);
 
@@ -562,7 +671,7 @@ function calculateCAGR() {
   ]);
   if (!allFilled) return;
 
-  const initialValue = parseFloat(
+  const initialValue = getNumericValueFromText(
     document.getElementById("cagr-initial").value
   );
   const finalValue = parseFloat(document.getElementById("cagr-final").value);
@@ -584,7 +693,7 @@ function calculateCAGR() {
 function calculateEmergencyFund() {
   const allFilled = validateInputs(["emergency-expense", "emergency-months"]);
   if (!allFilled) return;
-  const expense = parseFloat(
+  const expense = getNumericValueFromText(
     document.getElementById("emergency-expense").value
   );
   const months = parseFloat(document.getElementById("emergency-months").value);
@@ -601,7 +710,11 @@ function calculateEmergencyFund() {
 function hasValidInputs(ids) {
   return ids.every((id) => {
     const el = document.getElementById(id);
-    return el && el.value.trim() !== "" && !isNaN(el.value);
+    if (!el || el.value.trim() === "") return false;
+
+    // Remove commas before checking if it's a valid number
+    const numValue = getNumericValueFromText(el.value);
+    return !isNaN(numValue) && numValue > 0;
   });
 }
 
@@ -660,6 +773,11 @@ function calculateAll() {
   // Emergency Fund
   if (hasValidInputs(["emergency-expense", "emergency-months"]))
     calculateEmergencyFund();
+
+  if (
+    hasValidInputs(["adv-initial-investment", "adv-interest-rate", "adv-years"])
+  )
+    calculateAdvancedInvestment();
 }
 
 // ---------- Calculate only active calculator ----------
@@ -729,6 +847,19 @@ function calculateActive(id) {
     case "emergency-fund":
       if (hasValidInputs(["emergency-expense", "emergency-months"]))
         calculateEmergencyFund();
+      break;
+    case "investment-calculator":
+      if (
+        hasValidInputs([
+          "adv-initial-investment",
+          "adv-interest-rate",
+          "adv-years",
+        ])
+      )
+        calculateAdvancedInvestment();
+      break;
+    case "tax-calculator":
+      if (hasValidInputs(["basic-annual"])) calculateTaxOnSalary();
       break;
   }
 }
