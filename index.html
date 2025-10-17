@@ -96,7 +96,7 @@
           </svg>
         </button>
         <div class="mobile-header-content">
-          <h1 id="mobile-page-title">Loan EMI Calculator</h1>
+          <h1 id="mobile-page-title"></h1>
         </div>
       </div>
 
@@ -122,85 +122,218 @@
         <nav class="sidebar-nav">
           <button
             class="nav-item active"
-            onclick="showCalculator('loan-emi', this)"
+            id="home-btn"
+            onclick="showCalculator('home', this)"
           >
-            Loan EMI
+            🏠 Home
+          </button>
+          <button class="nav-item" onclick="showCalculator('loan-emi', this)">
+            💰 Loan EMI
           </button>
           <button class="nav-item" onclick="showCalculator('fd', this)">
-            Fixed Deposit
+            🏦 Fixed Deposit
           </button>
           <button class="nav-item" onclick="showCalculator('rd', this)">
-            Recurring Deposit
+            📅 Recurring Deposit
           </button>
           <button class="nav-item" onclick="showCalculator('inflation', this)">
-            Inflation
+            📈 Inflation
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('future-value', this)"
           >
-            Future Value
+            🔮 Future Value
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('present-value', this)"
           >
-            Present Value
+            🕒 Present Value
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('simple-interest', this)"
           >
-            Simple Interest
+            📌 Simple Interest
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('compound-interest', this)"
           >
-            Compound Interest
+            🧮 Compound Interest
           </button>
           <button class="nav-item" onclick="showCalculator('sip', this)">
-            SIP Calculator
+            🏛️ SIP Calculator
           </button>
           <button class="nav-item" onclick="showCalculator('swp', this)">
-            SWP Calculator
+            💸 SWP Calculator
           </button>
           <button class="nav-item" onclick="showCalculator('lumpsum', this)">
-            Lumpsum
+            💵 Lumpsum
           </button>
           <button class="nav-item" onclick="showCalculator('cagr', this)">
-            CAGR
+            📊 CAGR
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('emergency-fund', this)"
           >
-            Emergency Fund
+            🚨 Emergency Fund
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('investment-calculator', this)"
           >
-            Investment Calculator
+            📋 Investment Calculator
           </button>
           <button
             class="nav-item"
             onclick="showCalculator('tax-calculator', this)"
           >
-            Tax Calculator
+            🧾 Tax Calculator
           </button>
         </nav>
       </aside>
 
       <main class="main-content">
         <div class="content-header">
-          <h2 id="page-title">Loan EMI Calculator</h2>
-          <p id="page-description">
-            Calculate your monthly EMI for various loan types
-          </p>
+          <h2 id="page-title"></h2>
+          <p id="page-description"></p>
         </div>
+        <header class="home-header content-header">
+          <p>Plan your finances smartly with 15+ calculators</p>
+          <div class="home-header-content">
+            <div class="home-search">
+              <input
+                type="text"
+                id="searchInput"
+                placeholder="Search calculators..."
+                autocomplete="off"
+              />
+              <svg
+                class="home-search-icon"
+                fill="none"
+                stroke="currentColor"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  stroke-width="2"
+                  d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"
+                ></path>
+              </svg>
+            </div>
+            <div class="home-categories">
+              <div class="home-categories-content">
+                <div
+                  class="home-categories-scroll"
+                  id="categoriesContainer"
+                ></div>
+              </div>
+            </div>
+          </div>
+        </header>
 
-        <section id="loan-emi" class="calculator active">
+        <section id="home" class="calculator active">
+          <div class="card">
+            <main class="home-main">
+              <div id="calculatorGrid" class="calculator-grid"></div>
+
+              <!-- Stats Section -->
+              <div class="stats-section">
+                <div class="stats-grid">
+                  <div>
+                    <div class="stat-value">15+</div>
+                    <div class="stat-label">Calculators</div>
+                  </div>
+                  <div>
+                    <div class="stat-value">100%</div>
+                    <div class="stat-label">Free Forever</div>
+                  </div>
+                  <div>
+                    <div class="stat-value">24/7</div>
+                    <div class="stat-label">Available</div>
+                  </div>
+                </div>
+              </div>
+
+              <!-- Features Section -->
+              <div class="features-section">
+                <div class="feature-card">
+                  <svg
+                    class="feature-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M9 12l2 2 4-4m6 2a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <h4 class="feature-title">Accurate</h4>
+                  <p class="feature-desc">Precise calculations</p>
+                </div>
+                <div class="feature-card">
+                  <svg
+                    class="feature-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <h4 class="feature-title">Fast</h4>
+                  <p class="feature-desc">Instant results</p>
+                </div>
+                <div class="feature-card">
+                  <svg
+                    class="feature-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z"
+                    ></path>
+                  </svg>
+                  <h4 class="feature-title">Free</h4>
+                  <p class="feature-desc">No hidden costs</p>
+                </div>
+                <div class="feature-card">
+                  <svg
+                    class="feature-icon"
+                    fill="none"
+                    stroke="currentColor"
+                    viewBox="0 0 24 24"
+                  >
+                    <path
+                      stroke-linecap="round"
+                      stroke-linejoin="round"
+                      stroke-width="2"
+                      d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"
+                    ></path>
+                  </svg>
+                  <h4 class="feature-title">Smart</h4>
+                  <p class="feature-desc">Expert formulas</p>
+                </div>
+              </div>
+            </main>
+          </div>
+        </section>
+        <section id="loan-emi" class="calculator">
           <div class="card">
             <div class="small-text">
               Calculate EMI for regular loans or interest-only loans like Gold
@@ -3504,6 +3637,239 @@
           }, 500);
         }, 500);
       });
+    </script>
+    <script>
+      const calculators = [
+        {
+          id: "loan-emi",
+          title: "Loan EMI",
+          description:
+            "Calculate monthly EMI for regular and interest-only loans",
+          icon: "M3 10h18M7 15h1m4 0h1m-7 4h12a3 3 0 003-3V8a3 3 0 00-3-3H6a3 3 0 00-3 3v8a3 3 0 003 3z",
+          color: "#3b82f6",
+          category: "Loans",
+        },
+        {
+          id: "fd",
+          title: "Fixed Deposit",
+          description:
+            "Calculate FD returns with various compounding frequencies",
+          icon: "M17 9V7a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2m2 4h10a2 2 0 002-2v-6a2 2 0 00-2-2H9a2 2 0 00-2 2v6a2 2 0 002 2zm7-5a2 2 0 11-4 0 2 2 0 014 0z",
+          color: "#10b981",
+          category: "Deposits",
+        },
+        {
+          id: "rd",
+          title: "Recurring Deposit",
+          description: "Plan your recurring deposit investments",
+          icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+          color: "#8b5cf6",
+          category: "Deposits",
+        },
+        {
+          id: "sip",
+          title: "SIP Calculator",
+          description:
+            "Plan your Systematic Investment Plan with step-up options",
+          icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+          color: "#f59e0b",
+          category: "Investments",
+        },
+        {
+          id: "swp",
+          title: "SWP Calculator",
+          description:
+            "Calculate Systematic Withdrawal Plan with sustainability",
+          icon: "M13 17h8m0 0V9m0 8l-8-8-4 4-6-6",
+          color: "#ef4444",
+          category: "Investments",
+        },
+        {
+          id: "lumpsum",
+          title: "Lumpsum",
+          description: "Calculate returns on one-time investments",
+          icon: "M12 8c-1.657 0-3 .895-3 2s1.343 2 3 2 3 .895 3 2-1.343 2-3 2m0-8c1.11 0 2.08.402 2.599 1M12 8V7m0 1v8m0 0v1m0-1c-1.11 0-2.08-.402-2.599-1M21 12a9 9 0 11-18 0 9 9 0 0118 0z",
+          color: "#06b6d4",
+          category: "Investments",
+        },
+        {
+          id: "inflation",
+          title: "Inflation",
+          description: "Understand inflation's impact on your money over time",
+          icon: "M13 7h8m0 0v8m0-8l-8 8-4-4-6 6",
+          color: "#ec4899",
+          category: "Analysis",
+        },
+        {
+          id: "cagr",
+          title: "CAGR",
+          description: "Calculate Compound Annual Growth Rate",
+          icon: "M9 19v-6a2 2 0 00-2-2H5a2 2 0 00-2 2v6a2 2 0 002 2h2a2 2 0 002-2zm0 0V9a2 2 0 012-2h2a2 2 0 012 2v10m-6 0a2 2 0 002 2h2a2 2 0 002-2m0 0V5a2 2 0 012-2h2a2 2 0 012 2v14a2 2 0 01-2 2h-2a2 2 0 01-2-2z",
+          color: "#14b8a6",
+          category: "Analysis",
+        },
+        {
+          id: "simple-interest",
+          title: "Simple Interest",
+          description: "Basic interest calculations for loans and deposits",
+          icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
+          color: "#6366f1",
+          category: "Interest",
+        },
+        {
+          id: "compound-interest",
+          title: "Compound Interest",
+          description: "Advanced compound interest with multiple frequencies",
+          icon: "M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z",
+          color: "#8b5cf6",
+          category: "Interest",
+        },
+        {
+          id: "future-value",
+          title: "Future Value",
+          description: "Calculate future value of your investments",
+          icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+          color: "#f97316",
+          category: "Analysis",
+        },
+        {
+          id: "present-value",
+          title: "Present Value",
+          description: "Find present value of future cash flows",
+          icon: "M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z",
+          color: "#84cc16",
+          category: "Analysis",
+        },
+        {
+          id: "emergency-fund",
+          title: "Emergency Fund",
+          description: "Plan your emergency savings based on expenses",
+          icon: "M12 9v2m0 4h.01m-6.938 4h13.856c1.54 0 2.502-1.667 1.732-3L13.732 4c-.77-1.333-2.694-1.333-3.464 0L3.34 16c-.77 1.333.192 3 1.732 3z",
+          color: "#dc2626",
+          category: "Planning",
+        },
+        {
+          id: "investment-calculator",
+          title: "Investment Calulator",
+          description:
+            "Comprehensive investment planning with SIP, SWP, and goals",
+          icon: "M21 13.255A23.931 23.931 0 0112 15c-3.183 0-6.22-.62-9-1.745M16 6V4a2 2 0 00-2-2h-4a2 2 0 00-2 2v2m4 6h.01M5 20h14a2 2 0 002-2V8a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z",
+          color: "#7c3aed",
+          category: "Investments",
+        },
+        {
+          id: "tax-calculator",
+          title: "Tax Calculator",
+          description: "Calculate tax liability and compare regimes",
+          icon: "M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z",
+          color: "#0891b2",
+          category: "Tax",
+        },
+      ];
+
+      let activeCategory = "All";
+      let searchQuery = "";
+
+      function renderCategories() {
+        const categories = [
+          "All",
+          ...new Set(calculators.map((c) => c.category)),
+        ];
+        const container = document.getElementById("categoriesContainer");
+
+        container.innerHTML = categories
+          .map(
+            (cat) => `
+        <button 
+          class="category-btn ${cat === activeCategory ? "active" : ""}" 
+          onclick="setCategory('${cat}')"
+        >
+          ${cat}
+        </button>
+      `
+          )
+          .join("");
+      }
+
+      function setCategory(category) {
+        activeCategory = category;
+        renderCategories();
+        renderCalculators();
+      }
+
+      function renderCalculators() {
+        const filtered = calculators.filter((calc) => {
+          const matchesSearch =
+            calc.title.toLowerCase().includes(searchQuery.toLowerCase()) ||
+            calc.description.toLowerCase().includes(searchQuery.toLowerCase());
+          const matchesCategory =
+            activeCategory === "All" || calc.category === activeCategory;
+          return matchesSearch && matchesCategory;
+        });
+
+        const grid = document.getElementById("calculatorGrid");
+
+        if (filtered.length === 0) {
+          grid.innerHTML = `
+          <div class="empty-state" style="grid-column: 1 / -1;">
+            <svg class="empty-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 7h6m0 10v-3m-3 3h.01M9 17h.01M9 14h.01M12 14h.01M15 11h.01M12 11h.01M9 11h.01M7 21h10a2 2 0 002-2V5a2 2 0 00-2-2H7a2 2 0 00-2 2v14a2 2 0 002 2z"></path>
+            </svg>
+            <h3 class="empty-title">No calculators found</h3>
+            <p class="empty-text">Try adjusting your search or filters</p>
+          </div>
+        `;
+          return;
+        }
+
+        grid.innerHTML = filtered
+          .map(
+            (calc) => `
+        <div class="calc-card" onclick="navigateToCalculator('${calc.id}');">
+          <div class="calc-card-header">
+            <div class="calc-icon-wrapper" style="background-color: ${calc.color}15;">
+              <svg class="calc-icon" style="color: ${calc.color};" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="${calc.icon}"></path>
+              </svg>
+            </div>
+            <div class="calc-info">
+              <div class="calc-title-row">
+                <h3 class="calc-title">${calc.title}</h3>
+                <span class="calc-badge" style="background-color: ${calc.color}15; color: ${calc.color};">
+                  ${calc.category}
+                </span>
+              </div>
+              <p class="calc-description">${calc.description}</p>
+            </div>
+          </div>
+          <div class="calc-card-footer">
+            <button class="calc-btn">
+              Open Calculator
+              <svg class="calc-btn-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 7h8m0 0v8m0-8l-8 8-4-4-6 6"></path>
+              </svg>
+            </button>
+          </div>
+        </div>
+      `
+          )
+          .join("");
+      }
+
+      function navigateToCalculator(id) {
+        showTransitionSplash(() => (window.location.hash = id));
+        document.getElementById("sidebar").classList.remove("hidden");
+      }
+
+      // Search functionality
+      document.getElementById("searchInput").addEventListener("input", (e) => {
+        searchQuery = e.target.value;
+        renderCalculators();
+      });
+
+      // Initial render
+      renderCategories();
+      renderCalculators();
     </script>
     <script src="calculators.js"></script>
     <script src="data-handler.js"></script>

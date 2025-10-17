@@ -1,96 +1,132 @@
-// Indian number formatter for oninput attribute
+// --- Indian Number Formatter for display/input (with decimal support) ---
 function formatIndianNumber(input) {
   const cursorPosition = input.selectionStart;
   const oldValue = input.value;
   const oldLength = oldValue.length;
 
-  // Remove existing commas
+  // Remove commas
   let value = input.value.replace(/,/g, "");
 
-  // Remove non-numeric characters
-  value = value.replace(/[^\d]/g, "");
+  // Allow digits and a single decimal point
+  value = value.replace(/[^\d.]/g, "");
+  const parts = value.split(".");
 
-  // Remove leading zeros (but keep single 0)
-  value = value.replace(/^0+(?!$)/, "");
+  // Handle multiple dots
+  if (parts.length > 2) {
+    value = parts[0] + "." + parts.slice(1).join("").replace(/\./g, "");
+  }
 
-  if (!value) {
-    input.value = "";
+  // --- Allow user to type "." at end ---
+  if (value.endsWith(".")) {
+    const [integerPartRaw] = value.split(".");
+    const integerPart = integerPartRaw.replace(/^0+(?!$)/, "") || "0";
+    input.value = formatIndianNumberFromData(integerPart) + ".";
+    input.setSelectionRange(cursorPosition, cursorPosition);
     return;
   }
 
-  // Format according to Indian numbering system
-  let formattedValue = "";
-  if (value.length <= 3) {
-    formattedValue = value;
-  } else {
-    const lastThree = value.slice(-3);
-    const remaining = value.slice(0, -3);
-    const formatted = remaining.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
-    formattedValue = formatted + "," + lastThree;
-  }
+  // Split into integer and decimal parts
+  const [integerPartRaw, decimalPart] = value.split(".");
+
+  // Format integer part
+  const formattedInt = formatIndianNumberFromData(
+    integerPartRaw || "0"
+  ).replace(/\.\d+$/, "");
+
+  // Combine integer and decimal
+  const formattedValue = decimalPart
+    ? `${formattedInt}.${decimalPart}`
+    : formattedInt;
 
   input.value = formattedValue;
 
   // Adjust cursor position
   const newLength = formattedValue.length;
-  const addedChars = newLength - oldLength;
-  let newPosition = cursorPosition + addedChars;
-
-  if (newPosition > 0 && formattedValue[newPosition - 1] === ",") {
-    newPosition++;
-  }
-
+  const diff = newLength - oldLength;
+  let newPosition = cursorPosition + diff;
+  if (newPosition < 0) newPosition = 0;
+  if (newPosition > newLength) newPosition = newLength;
   input.setSelectionRange(newPosition, newPosition);
 }
 
+// --- Indian Number Formatter for static data ---
 function formatIndianNumberFromData(data) {
-  const value = Math.abs(data).toString();
+  if (data === null || data === undefined || data === "") return "";
+  if (isNaN(data)) return data;
 
-  if (value.length <= 3) return value;
+  const numStr = Math.abs(data).toString();
+  const [integerPartRaw, decimalPart] = numStr.split(".");
 
-  const lastThree = value.slice(-3);
-  const remaining = value.slice(0, -3);
+  const integerPart = integerPartRaw.replace(/^0+(?!$)/, "") || "0";
+
+  if (integerPart.length <= 3) {
+    return decimalPart ? `${integerPart}.${decimalPart}` : integerPart;
+  }
+
+  const lastThree = integerPart.slice(-3);
+  const remaining = integerPart.slice(0, -3);
   const formattedRemaining = remaining.replace(/\B(?=(\d{2})+(?!\d))/g, ",");
 
-  return formattedRemaining + "," + lastThree;
+  const formatted = formattedRemaining + "," + lastThree;
+  return decimalPart ? `${formatted}.${decimalPart}` : formatted;
 }
 
-// International number formatter (1,000,000)
+// --- International Number Formatter (with decimal and "." typing support) ---
 function formatInternationalNumber(input) {
   const cursorPosition = input.selectionStart;
   const oldValue = input.value;
   const oldLength = oldValue.length;
 
+  // Remove commas
   let value = input.value.replace(/,/g, "");
-  value = value.replace(/[^\d]/g, "");
-  value = value.replace(/^0+(?!$)/, ""); // strip leading zeros
 
-  if (!value) {
-    input.value = "";
+  // Allow digits and one decimal point
+  value = value.replace(/[^\d.]/g, "");
+  const parts = value.split(".");
+
+  // Handle multiple dots
+  if (parts.length > 2) {
+    value = parts[0] + "." + parts.slice(1).join("").replace(/\./g, "");
+  }
+
+  // --- Allow user to type "." at end ---
+  if (value.endsWith(".")) {
+    const [integerPartRaw] = value.split(".");
+    const integerPart = integerPartRaw.replace(/^0+(?!$)/, "") || "0";
+    input.value = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",") + ".";
+    input.setSelectionRange(cursorPosition, cursorPosition);
     return;
   }
 
-  const formattedValue = value.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+  const [integerPartRaw, decimalPart] = value.split(".");
+  const integerPart = integerPartRaw.replace(/^0+(?!$)/, "") || "0";
+  const formattedInt = integerPart.replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+
+  const formattedValue = decimalPart
+    ? `${formattedInt}.${decimalPart}`
+    : formattedInt;
+
   input.value = formattedValue;
 
   const newLength = formattedValue.length;
-  const addedChars = newLength - oldLength;
-  let newPosition = cursorPosition + addedChars;
-
-  if (newPosition > 0 && formattedValue[newPosition - 1] === ",") {
-    newPosition++;
-  }
-
+  const diff = newLength - oldLength;
+  let newPosition = cursorPosition + diff;
+  if (newPosition < 0) newPosition = 0;
+  if (newPosition > newLength) newPosition = newLength;
   input.setSelectionRange(newPosition, newPosition);
 }
 
+// --- Utility: get numeric value from an input selector ---
 function getNumericValue(selector) {
-  return (
-    parseFloat(document.querySelector(selector).value.replace(/,/g, "")) || 0
-  );
+  const el = document.querySelector(selector);
+  if (!el) return 0;
+  const value = el.value.replace(/,/g, "");
+  return parseFloat(value) || 0;
 }
 
+// --- Utility: get numeric value from text ---
 function getNumericValueFromText(text) {
+  if (!text) return 0;
   return parseFloat(text.replace(/,/g, "")) || 0;
 }
 

@@ -71,7 +71,6 @@ function calculateTakeHomeSalary(
   showConfirmation = true,
   showCompromiseDialog = true
 ) {
-  console.clear();
   const taxBracketsOld = [
     new TaxBracket(0, 250000, 0.0),
     new TaxBracket(250000, 500000, 0.05),
@@ -672,10 +671,3 @@ document
       btn.disabled = false;
     }, 500);
   });
-
-document.addEventListener("DOMContentLoaded", () => {
-  var resultTable = document.querySelector(".calculations");
-  resultTable.classList.add("hidden");
-  loadInputs();
-  calculateTakeHomeSalary(false, false);
-});

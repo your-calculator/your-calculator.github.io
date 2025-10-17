@@ -1,5 +1,9 @@
 let amortizationData = [];
 const calculatorTitles = {
+  home: {
+    title: "Financial Calculator",
+    desc: "Calculate your monthly EMI for various loan types",
+  },
   "loan-emi": {
     title: "Loan EMI Calculator",
     desc: "Calculate your monthly EMI for various loan types",
@@ -154,9 +158,15 @@ function showCalculator(id, navItem) {
   setTimeout(() => calculateActive(id), 100);
 
   history.replaceState(null, null, "#" + id);
+
+  updateLayoutForTab(id);
+  window.scrollTo({ top: 0, behavior: "smooth" });
 }
 
 function activateCalculatorFromHash() {
+  if (!window.location.hash) {
+    window.location.hash = "home"; //default hash
+  }
   const hash = window.location.hash.substring(1); // remove '#'
   if (hash && document.getElementById(hash)) {
     const navItem = document.querySelector(`[onclick*="${hash}"]`);
@@ -164,60 +174,122 @@ function activateCalculatorFromHash() {
   }
 }
 
-// Enforce min/max constraints on all number inputs
-function enforceMinMax() {
-  const numberInputs = document.querySelectorAll('input[type="number"]');
+function setupNumberInputs() {
+  document.querySelectorAll('input[type="number"]').forEach((input) => {
+    const min = parseFloat(input.min);
+    const max = parseFloat(input.max);
 
-  numberInputs.forEach((input) => {
     input.addEventListener("input", function () {
-      let value = this.value;
-      const min = parseFloat(this.min);
-      const max = parseFloat(this.max);
+      let value = input.value;
+      const start = input.selectionStart;
+      const end = input.selectionEnd;
 
-      // Remove all minus signs except the first character
+      // --- Step 1: Allow only one minus at start ---
       const hasNegative = value.startsWith("-");
       value = value.replace(/-/g, "");
-      if (hasNegative) {
-        value = "-" + value;
+      if (hasNegative) value = "-" + value;
+
+      // --- Step 2: Trim leading zeros (but keep "0." and "-0.") ---
+      if (value !== "" && !/^(-?)0\./.test(value)) {
+        value = value.replace(/^(-?)0+(?=\d)/, "$1");
       }
 
-      this.value = value; // Update immediately to clean up input
+      // --- Step 3: Enforce min/max if valid ---
+      const num = parseFloat(value);
+      if (!isNaN(num)) {
+        if (!isNaN(min) && num < min) value = String(min);
+        else if (!isNaN(max) && num > max) value = String(max);
+      }
 
-      const numValue = parseFloat(value);
+      // --- Step 4: Apply cleaned value + fix cursor ---
+      if (value !== input.value) {
+        const diff = input.value.length - value.length;
+        input.value = value;
+        try {
+          if (start !== null && end !== null) {
+            input.setSelectionRange(start - diff, end - diff);
+          }
+        } catch (e) {
+          // Silently ignore - happens when input type doesn't support selection
+        }
+      }
+    });
 
-      if (!isNaN(numValue)) {
-        if (!isNaN(min) && numValue < min) {
-          this.value = min;
-        } else if (!isNaN(max) && numValue > max) {
-          this.value = max;
+    input.addEventListener("blur", () => {
+      let value = input.value.trim();
+      if (value === "") return;
+
+      const num = Number(value);
+      if (!isNaN(num)) {
+        // Normalize by removing trailing zeros
+        let normalized = parseFloat(num.toString()).toString();
+
+        // Keep "12." if user typed that
+        if (!/\.$/.test(input.value)) {
+          input.value = normalized;
         }
       }
     });
   });
 }
 
-// Run when DOM is ready
-document.addEventListener("DOMContentLoaded", enforceMinMax);
+function updateLayoutForTab(id) {
+  const tabHeader = document.querySelector(".content-header");
+  const homeHeader = document.querySelector(".home-header");
+  if (id === "home") {
+    tabHeader.classList.add("hidden");
+    homeHeader.classList.remove("hidden");
+  } else {
+    tabHeader.classList.remove("hidden");
+    homeHeader.classList.add("hidden");
+  }
+}
 
-// Also run if you dynamically add inputs later
-// Just call enforceMinMax() after adding new inputs
+function showTransitionSplash(callback) {
+  const app = document.querySelector(".app-container");
+  if (!app) {
+    callback?.();
+    return;
+  }
 
-// Run when DOM is ready
-document.addEventListener("DOMContentLoaded", enforceMinMax);
+  // Create a temporary splash clone
+  const splash = document.createElement("div");
+  splash.className = "splash-screen transition-splash";
+  splash.innerHTML = `
+    <div class="splash-content">
+      <img src="icons/icon-192.png" alt="Logo" class="splash-icon" />
+      <h1 class="splash-title">Financial Calculator</h1>
+      <p class="splash-subtitle">Plan your finances smartly</p>
+      <div class="splash-loader">
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+        <div class="bubble"></div>
+      </div>
+    </div>
+  `;
 
-// Also run if you dynamically add inputs later
-// Just call enforceMinMax() after adding new inputs
+  document.body.appendChild(splash);
+
+  // Force reflow
+  splash.offsetHeight;
+  splash.classList.add("show");
+
+  // Wait a tick, then update layout underneath
+  setTimeout(() => {
+    callback?.();
+  }, 100);
+
+  // Fade out splash after short delay
+  setTimeout(() => {
+    splash.classList.add("fade-out");
+    setTimeout(() => splash.remove(), 500);
+  }, 600);
+}
 
 // ---------- Init ----------
 window.addEventListener("DOMContentLoaded", () => {
-  // Load saved inputs
   loadInputs();
-
-  // Calculate all calculators with saved values
   calculateAll();
-
-  // Restore active tab
-  // Activate calculator from URL hash first, fallback to saved tab
   activateCalculatorFromHash();
 
   const savedTab = localStorage.getItem("activeCalculator");
@@ -226,68 +298,23 @@ window.addEventListener("DOMContentLoaded", () => {
     showCalculator(savedTab, navItem);
   }
 
-  // Debounced auto-calc on any input change
   const debouncedCalc = debounce(() => {
     saveInputs();
     calculateAll();
   }, 0);
 
-  // Attach to all inputs
   document.querySelectorAll("input").forEach((input) => {
     input.addEventListener("input", debouncedCalc);
   });
 
   initYearDropdown();
   initializeOldApp();
+  setupNumberInputs();
 });
 
-// Handle browser back/forward hash changes
 window.addEventListener("hashchange", () => {
   activateCalculatorFromHash();
 });
-
-document
-  .querySelectorAll('input[type="number"], input[type="text"]')
-  .forEach((input) => {
-    // --- Trim leading zeros live ---
-    input.addEventListener("input", () => {
-      const start = input.selectionStart;
-      const end = input.selectionEnd;
-      let value = input.value;
-
-      // Skip if empty or starts with valid 0. / -0.
-      if (value !== "" && !/^(-?)0\./.test(value)) {
-        const newValue = value.replace(/^(-?)0+(?=\d)/, "$1");
-        if (newValue !== value) {
-          input.value = newValue;
-          const diff = value.length - newValue.length;
-          input.setSelectionRange(start - diff, end - diff);
-        }
-      }
-    });
-
-    // --- Normalize on blur ---
-    input.addEventListener("blur", () => {
-      let value = input.value.trim();
-      if (value === "") return;
-
-      // Only normalize if it's a valid numeric string
-      const num = Number(value);
-      if (!isNaN(num)) {
-        // Use parseFloat to remove trailing zeros but keep decimals
-        value = parseFloat(num.toString()).toString();
-
-        // If user entered something like "12." → keep the dot (optional)
-        if (/\.$/.test(input.value)) {
-          input.value = input.value; // leave as is
-        } else {
-          input.value = value;
-        }
-      }
-    });
-  });
-
-document.addEventListener("DOMContentLoaded", enforceMinMax);
 
 if ("serviceWorker" in navigator) {
   window.addEventListener("load", () => {
