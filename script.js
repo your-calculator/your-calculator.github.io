@@ -286,8 +286,21 @@ function showTransitionSplash(callback) {
   }, 600);
 }
 
+function showSplashScreen() {
+  const splash = document.getElementById("splash-screen");
+  setTimeout(function () {
+    splash.classList.add("fade-out");
+    setTimeout(function () {
+      splash.remove();
+    }, 500);
+  }, 500);
+}
+
 // ---------- Init ----------
 window.addEventListener("DOMContentLoaded", () => {
+  showSplashScreen();
+  initYearDropdown();
+  initializeOldApp();
   loadInputs();
   calculateAll();
   activateCalculatorFromHash();
@@ -307,8 +320,6 @@ window.addEventListener("DOMContentLoaded", () => {
     input.addEventListener("input", debouncedCalc);
   });
 
-  initYearDropdown();
-  initializeOldApp();
   setupNumberInputs();
 });
 

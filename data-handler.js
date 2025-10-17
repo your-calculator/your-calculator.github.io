@@ -566,6 +566,6 @@ function resetSection(sectionId) {
   // For advanced investment, reload to restore defaults
   if (sectionId === "investment-calculator" || sectionId === "tax-calculator") {
     goalsAlreadyLoaded = false;
-    location.reload();
   }
+  location.reload();
 }

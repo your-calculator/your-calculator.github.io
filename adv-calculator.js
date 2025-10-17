@@ -1605,7 +1605,7 @@ function aggregateYearlyInvestmentHistory(monthlyInvestmentHistory) {
 
 function formatInputFieldValues() {
   const inputElements = document.querySelectorAll(
-    'input[type="text"]:not(.goalName):not(#searchInput)'
+    '#investment-calculator input[type="text"]:not(.goalName):not(#searchInput)'
   );
 
   inputElements.forEach((input) => {
@@ -2393,7 +2393,7 @@ function addGoalRow(
     <td>
         <input type="text" class="goalAmount" oninput="formatIndianNumber(this); saveInputs()"  
                autocomplete="off" 
-               value="${amount}" />
+               value="${formatIndianNumberFromData(amount)}" />
     </td>
     <td class="goalActions desktop-only">
       <button type="button" onclick="moveGoalRowUp(this)" title="Move Up">
