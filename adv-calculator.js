@@ -295,7 +295,6 @@ async function downloadGoalTemplate() {
 }
 
 function calculate(showConfirmation = true, showCompromiseDialog = true) {
-  console.clear();
   shouldShowCompromiseDialog = showCompromiseDialog; // Set the flag
   inflationRate = document.querySelector(".inflationRate").value;
 
@@ -1606,7 +1605,7 @@ function aggregateYearlyInvestmentHistory(monthlyInvestmentHistory) {
 
 function formatInputFieldValues() {
   const inputElements = document.querySelectorAll(
-    'input[type="text"]:not(.goalName)'
+    'input[type="text"]:not(.goalName):not(#searchInput)'
   );
 
   inputElements.forEach((input) => {

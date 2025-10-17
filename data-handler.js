@@ -228,6 +228,13 @@ function saveInputs() {
   document
     .querySelectorAll("input[type='text'], input[type='number']")
     .forEach((input) => {
+      if (
+        input.id === "searchInput" ||
+        input.closest(".result-section, .results-chart-container")
+      ) {
+        return;
+      }
+
       // Save by ID first (preferred)
       if (
         input.id &&
@@ -425,13 +432,42 @@ function importData(event) {
   event.target.value = "";
 }
 
-/**
- * Reset all data and reload
- */
 function resetAll() {
-  goalsAlreadyLoaded = false;
+  // Clear all localStorage data
   clearStorage();
-  location.reload();
+
+  // Reset goal-related variables
+  if (typeof goalCounter !== "undefined") {
+    goalCounter = 1;
+  }
+  goalsAlreadyLoaded = false;
+
+  // Clear goal rows from DOM
+  const goalsTbody = document.getElementById("goalWithdrawalRows");
+  if (goalsTbody) {
+    goalsTbody.innerHTML = "";
+  }
+
+  // Hide lumpsum table
+  const lumpsumTable = document.querySelector(".lumpsumWithdrawalTable");
+  if (lumpsumTable) {
+    lumpsumTable.classList.add("hidden");
+  }
+
+  // Reset lumpsum toggle
+  const lumpsumToggle = document.getElementById("lumpsumWithdrawal");
+  if (lumpsumToggle) {
+    lumpsumToggle.checked = false;
+  }
+  showTransitionSplash(() => {
+    // Set hash to home (happens under the splash)
+    window.location.hash = "home";
+
+    // Reload after splash is visible
+    setTimeout(() => {
+      location.reload();
+    }, 200);
+  });
 }
 
 function resetSection(sectionId) {
