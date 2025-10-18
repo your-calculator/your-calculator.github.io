@@ -175,6 +175,9 @@
           <button class="nav-item" onclick="showCalculator('cagr', this)">
             📊 CAGR
           </button>
+          <button class="nav-item" onclick="showCalculator('xirr', this)">
+            📊 XIRR
+          </button>
           <button
             class="nav-item"
             onclick="showCalculator('emergency-fund', this)"
@@ -208,6 +211,7 @@
               <input
                 type="text"
                 id="searchInput"
+                class="do-not-auto-format"
                 placeholder="Search calculators..."
                 autocomplete="off"
               />
@@ -1331,7 +1335,97 @@
             </div>
           </div>
         </section>
+        <section id="xirr" class="calculator">
+          <div class="card">
+            <div class="small-text">
+              Calculate the Internal Rate of Return (XIRR) for your investments
+              based on transaction history
+            </div>
 
+            <div class="form-group">
+              <label>Current Portfolio Value (₹) - Optional</label>
+              <input
+                id="xirr-current-value"
+                class="do-not-auto-format"
+                type="text"
+                placeholder="Enter current portfolio value if you have unrealized holdings"
+                oninput="formatIndianNumber(this);"
+              />
+              <p class="info" style="margin-top: 5px; font-size: 11px">
+                💡 Add if you hold any unrealised investments for correct
+                calculations. Leave blank if fully redeemed.
+              </p>
+            </div>
+
+            <div class="form-group">
+              <div class="button_container">
+                <div class="left-container">
+                  <button
+                    type="button"
+                    class="add-goal-btn"
+                    onclick="downloadXIRRTemplate()"
+                  >
+                    <i class="fas fa-download"></i> Download Template
+                  </button>
+                  <input
+                    type="file"
+                    id="xirrFile"
+                    accept=".xlsx"
+                    style="display: none"
+                    onchange="importXIRRTransactions(event)"
+                  />
+                  <button
+                    type="button"
+                    class="add-goal-btn"
+                    onclick="document.getElementById('xirrFile').click()"
+                  >
+                    <i class="fas fa-file-upload"></i> Import
+                  </button>
+                </div>
+                <div class="right-container">
+                  <button
+                    type="button"
+                    class="add-goal-btn danger-btn"
+                    onclick="clearXIRRTransactions()"
+                  >
+                    <i class="fas fa-trash-alt"></i> Clear All
+                  </button>
+                </div>
+              </div>
+              <p class="info">
+                💡 Download template → fill transactions → import → calculate
+                XIRR
+              </p>
+            </div>
+
+            <div class="button-container">
+              <button class="calculate-btn" onclick="calculateXIRR()">
+                Calculate XIRR
+              </button>
+              <button
+                id="reset"
+                title="Reset"
+                onclick="clearXIRRTransactions()"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+
+            <div class="result-section hide">
+              <div class="result-item">
+                <span class="result-label">XIRR (Annualized Return)</span>
+                <span class="result-value" id="xirr-result">0%</span>
+              </div>
+            </div>
+
+            <div class="xirr-table-wrapper hide">
+              <div class="resultHeader">Transaction History</div>
+              <div class="amortization-table-wrapper">
+                <div id="xirrResultTable"></div>
+              </div>
+            </div>
+          </div>
+        </section>
         <section id="emergency-fund" class="calculator">
           <div class="card">
             <div class="small-text">
@@ -2915,7 +3009,7 @@
                   id="basic-annual"
                   name="basic-annual"
                   placeholder="0"
-                  oninput="updateBasicValues(this.className); calculateEpf(); formatIndianNumberAndCalculateTotal(this); "
+                  oninput="updateBasicValues(this.className); calculateEpfAndGratuity(); formatIndianNumberAndCalculateTotal(this); "
                 />
               </div>
               <div>
@@ -2926,7 +3020,7 @@
                   id="basic-monthly"
                   name="basic-monthly"
                   placeholder="0"
-                  oninput="updateBasicValues(this.className); calculateEpf(); formatIndianNumberAndCalculateTotal(this); "
+                  oninput="updateBasicValues(this.className); calculateEpfAndGratuity(); formatIndianNumberAndCalculateTotal(this); "
                 />
               </div>
             </div>
@@ -3697,6 +3791,14 @@
           category: "Analysis",
         },
         {
+          id: "xirr",
+          title: "XIRR Calculator",
+          description: "Calculate Internal Rate of Return for investments",
+          icon: "M7 12l3-3 3 3 4-4M8 21l4-4 4 4M3 4h18M4 4h16v12a1 1 0 01-1 1H5a1 1 0 01-1-1V4z",
+          color: "#16a34a",
+          category: "Analysis",
+        },
+        {
           id: "simple-interest",
           title: "Simple Interest",
           description: "Basic interest calculations for loans and deposits",
@@ -3863,6 +3965,7 @@
     <script src="data-handler.js"></script>
     <script src="charts.js"></script>
     <script src="alerts.js"></script>
+    <script src="xirr-calculator.js"></script>
     <script src="adv-calculator.js"></script>
     <script src="tax-calculator.js"></script>
     <script src="script.js"></script>

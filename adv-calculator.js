@@ -1212,15 +1212,15 @@ function calculateCompoundInterestAdv(
   );
   console.log("Total Systematic Withdrawal: ₹" + totalSWP);
   console.log("Total No Lumpsum Withdrawals: " + goalsCount);
-  if (goalsCount > 0) {
-    goalWithdrawals.forEach((goal, index) => {
-      console.log(
-        `  ${index + 1}. ${goal.name} - Year: ${goal.year}, Month: ${
-          goal.monthIndex
-        }, Amount: ₹${goal.inflatedAmount}, Original: ₹${goal.amountToday}`
-      );
-    });
-  }
+  // if (goalsCount > 0) {
+  //   goalWithdrawals.forEach((goal, index) => {
+  //     console.log(
+  //       `  ${index + 1}. ${goal.name} - Year: ${goal.year}, Month: ${
+  //         goal.monthIndex
+  //       }, Amount: ₹${goal.inflatedAmount}, Original: ₹${goal.amountToday}`
+  //     );
+  //   });
+  // }
   console.log(
     "************************************************************************************"
   );
@@ -1605,7 +1605,7 @@ function aggregateYearlyInvestmentHistory(monthlyInvestmentHistory) {
 
 function formatInputFieldValues() {
   const inputElements = document.querySelectorAll(
-    '#investment-calculator input[type="text"]:not(.goalName):not(#searchInput)'
+    '#investment-calculator input[type="text"]:not(.goalName):not(.do-not-auto-format)'
   );
 
   inputElements.forEach((input) => {
@@ -2445,12 +2445,9 @@ function getGoalWithdrawals(startingYear) {
     const year = parseInt(yearInput.value.replace(/,/g, "") || "0", 10);
     const amountToday = parseFloat(amountInput.value.replace(/,/g, "") || "0");
 
-    console.log("Amount Today: " + amountToday);
     if (name && !isNaN(year) && !isNaN(amountToday)) {
       const yearsUntilGoal = year - startingYear + 1;
-      console.log("startingYear (type):", startingYear, typeof startingYear);
-      console.log("goal year (type):", year, typeof year);
-      console.log("Year Until Goal: " + yearsUntilGoal);
+
       if (yearsUntilGoal >= 0) {
         const inflatedAmount = Math.round(
           amountToday * Math.pow(1 + inflationRate / 100, yearsUntilGoal)
