@@ -522,12 +522,22 @@ function updateBasicValues(className) {
   }
 }
 
-function calculateEpf() {
+function calculateEpfAndGratuity() {
   var basicSal = document
     .querySelector(".basic-annual")
     .value.replace(/,/g, "");
-  var epf = Math.round(basicSal * 0.12);
+  var epf = Math.min(1800 * 12, Math.round(basicSal * 0.12));
+  var gratuity = Math.round(basicSal * 0.0481);
+
   document.querySelector(".epf").value = formatIndianNumberFromData(epf);
+
+  document.querySelector(".employer-pf-annual").value =
+    formatIndianNumberFromData(epf);
+  updateBasicValues("employer-pf-annual");
+
+  document.querySelector(".gratuity-annual").value =
+    formatIndianNumberFromData(gratuity);
+  updateBasicValues("gratuity-annual");
 }
 
 // function calculateTotal() {

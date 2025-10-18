@@ -894,8 +894,5 @@ function calculateActive(id) {
       )
         calculateAdvancedInvestment();
       break;
-    case "tax-calculator":
-      if (hasValidInputs(["basic-annual"])) calculateTaxOnSalary();
-      break;
   }
 }

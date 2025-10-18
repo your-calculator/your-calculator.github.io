@@ -2646,6 +2646,22 @@ input[type="number"]::-webkit-outer-spin-button {
   }
 }
 
+.xirr-table-wrapper {
+  margin-top: 2rem;
+}
+
+.xirr-table-wrapper .resultHeader {
+  margin-bottom: 1rem;
+}
+
+#xirrResultTable {
+  width: 100%;
+}
+
+#xirrResultTable .amortization-table {
+  margin-top: 0;
+}
+
 .no-padding {
   padding: 0px;
 }

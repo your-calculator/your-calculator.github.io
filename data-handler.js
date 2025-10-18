@@ -229,7 +229,7 @@ function saveInputs() {
     .querySelectorAll("input[type='text'], input[type='number']")
     .forEach((input) => {
       if (
-        input.id === "searchInput" ||
+        input.classList.contains("do-not-auto-format") ||
         input.closest(".result-section, .results-chart-container")
       ) {
         return;

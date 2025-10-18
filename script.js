@@ -52,6 +52,10 @@ const calculatorTitles = {
     title: "CAGR Calculator",
     desc: "Calculate Compound Annual Growth Rate",
   },
+  xirr: {
+    title: "XIRR Calculator",
+    desc: "Calculate Internal Rate of Return for your investments",
+  },
   "emergency-fund": {
     title: "Emergency Fund Calculator",
     desc: "Plan your emergency fund savings",
@@ -298,6 +302,7 @@ function showSplashScreen() {
 
 // ---------- Init ----------
 window.addEventListener("DOMContentLoaded", () => {
+  console.clear();
   showSplashScreen();
   initYearDropdown();
   initializeOldApp();
