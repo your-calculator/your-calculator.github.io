@@ -1440,10 +1440,6 @@ td.no-height {
   transform: translateY(0);
 }
 
-.toast.error {
-  background: #e74c3c;
-}
-
 .custom-dialog-overlay {
   position: fixed;
   inset: 0;
@@ -1594,37 +1590,12 @@ td.no-height {
     font-size: 14px;
   }
 
-  .button_container.calc-button {
-    flex-wrap: wrap;
-    gap: 8px;
-  }
-
-  .button_container.calc-button .left-button,
-  .button_container.calc-button .right-button {
-    flex: 0 0 100%;
-    gap: 8px;
-  }
-
-  .button_container.calc-button .calculate-button,
-  .button_container.calc-button .reset-button,
-  .button_container.calc-button .json-button {
-    flex: 1 1 50%;
-    max-width: 50%;
-    height: 48px;
-    font-size: 14px;
-  }
-
-  .button_container.calc-button .right-button {
-    margin-top: 6px;
-  }
-
-  .left-container,
-  .right-container {
-    width: 45%;
-  }
-
   .add-goal-btn {
     font-size: 10px;
+  }
+
+  #xirr .add-goal-btn {
+    font-size: 12px;
   }
 }
 
