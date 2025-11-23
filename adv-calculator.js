@@ -69,6 +69,20 @@ function toggleSIP(suffix) {
   }
 }
 
+function toggleChangeSipAmount(suffix) {
+  var rows = document.querySelectorAll(".changeSipAmount" + suffix + "Rows");
+
+  if (isOpted("changeSipAmount" + suffix)) {
+    rows.forEach(function (row) {
+      row.classList.remove("hidden");
+    });
+  } else {
+    rows.forEach(function (row) {
+      row.classList.add("hidden");
+    });
+  }
+}
+
 function toggleAdvSWP(suffix) {
   var table = document.querySelector(".swpTable");
   if (isChecked("swpAdv" + suffix)) {
@@ -342,6 +356,12 @@ function calculate(showConfirmation = true, showCompromiseDialog = true) {
 
   const stopSipAfterYears = getNumericValue(".stopSipAfterYears");
 
+  const changeSipAmount = isOpted("changeSipAmount");
+  const changeSipAmountAfterYears = getNumericValue(
+    ".changeSipAmountAfterYears"
+  );
+  const updatedSipAmount = getNumericValue(".updatedSipAmount");
+
   const systematicWithdrawalAfterAPeriod = isChecked("swpAdv");
 
   const systematicWithdrawalAfterYears = getNumericValue(
@@ -472,6 +492,9 @@ function calculate(showConfirmation = true, showCompromiseDialog = true) {
     decreaseStepUpPercentTo,
     stopSipAfterAPeriod,
     stopSipAfterYears,
+    changeSipAmount,
+    changeSipAmountAfterYears,
+    updatedSipAmount,
     systematicWithdrawalAfterAPeriod,
     systematicWithdrawalAfterYears,
     withdrawalPerMonth,
@@ -591,6 +614,9 @@ function calculateCompoundInterestAdv(
   decreaseStepUpPercentTo,
   stopSipAfterAPeriod,
   stopSipAfterYears,
+  changeSipAmount,
+  changeSipAmountAfterYears,
+  updatedSipAmount,
   systematicWithdrawalAfterAPeriod,
   systematicWithdrawalAfterYears,
   withdrawalPerMonth,
@@ -642,6 +668,14 @@ function calculateCompoundInterestAdv(
     "************************************************************************************"
   );
   const totalMonths = years * 12;
+
+  const delayMonthsOne = parallelInvestmentOne
+    ? Math.max(0, (startingYearOne - startingYear) * 12)
+    : 0;
+  const delayMonthsTwo = parallelInvestmentTwo
+    ? Math.max(0, (startingYearTwo - startingYear) * 12)
+    : 0;
+
   stopSipAfterYears = years >= stopSipAfterYears ? stopSipAfterYears : years;
   stopSipOneAfterYears =
     years >= stopSipOneAfterYears ? stopSipOneAfterYears : years;
@@ -930,6 +964,17 @@ function calculateCompoundInterestAdv(
       }
     }
 
+    // --- Change SIP Amount after certain years ---
+    if (
+      sip &&
+      changeSipAmount &&
+      currentYear >= startingYear + changeSipAmountAfterYears &&
+      (!stopSipAfterAPeriod || i <= stopSipAfterMonths)
+    ) {
+      sipAmount = updatedSipAmount;
+      changeSipAmount = false; // Only change once
+    }
+
     // --- Step-up SWP ---
     if (
       stepUpWithdrawal &&
@@ -976,6 +1021,12 @@ function calculateCompoundInterestAdv(
   if (parallelInvestmentOne) {
     let compoundingCounterOne = 0;
     for (let i = 1; i <= totalMonths; i++) {
+      // Skip months before this investment starts
+      if (i <= delayMonthsOne) {
+        continue;
+      }
+
+      const actualMonthOne = i - delayMonthsOne;
       compoundingCounterOne++;
       if (
         decreaseInterestRateOne &&
@@ -986,10 +1037,10 @@ function calculateCompoundInterestAdv(
       }
       let sipForThisMonthOne = 0;
       if (
-        i <= totalMonths &&
+        actualMonthOne <= totalMonths &&
         sipOne &&
         frequencyCounterOne === 0 &&
-        (!stopSipOneAfterAPeriod || i <= stopSipAfterMonthsOne)
+        (!stopSipOneAfterAPeriod || actualMonthOne <= stopSipAfterMonthsOne)
       ) {
         sipForThisMonthOne = sipOneAmount;
       }
@@ -1014,7 +1065,7 @@ function calculateCompoundInterestAdv(
       monthlyInvestmentHistoryOne.push(
         new InvestmentHistory(
           currentYearOne,
-          i,
+          actualMonthOne,
           sipForThisMonthOne,
           totalDepositsOne,
           interestThisStepOne, // ✅ only non-zero on compounding months
@@ -1024,7 +1075,7 @@ function calculateCompoundInterestAdv(
       );
 
       monthCounterOne++;
-      if (i % 12 === 0) {
+      if (actualMonthOne % 12 === 0) {
         currentYearOne++;
       }
       // Step-up logic for parallel investment SIP
@@ -1044,6 +1095,12 @@ function calculateCompoundInterestAdv(
   if (parallelInvestmentTwo) {
     let compoundingCounterTwo = 0;
     for (let i = 1; i <= totalMonths; i++) {
+      // Skip months before this investment starts
+      if (i <= delayMonthsTwo) {
+        continue;
+      }
+
+      const actualMonthTwo = i - delayMonthsTwo;
       compoundingCounterTwo++;
       if (
         decreaseInterestRateTwo &&
@@ -1054,10 +1111,10 @@ function calculateCompoundInterestAdv(
       }
       let sipForThisMonthTwo = 0;
       if (
-        i <= totalMonths &&
+        actualMonthTwo <= totalMonths &&
         sipTwo &&
         frequencyCounterTwo === 0 &&
-        (!stopSipTwoAfterAPeriod || i <= stopSipAfterMonthsTwo)
+        (!stopSipTwoAfterAPeriod || actualMonthTwo <= stopSipAfterMonthsTwo)
       ) {
         sipForThisMonthTwo = sipTwoAmount;
       }
@@ -1083,7 +1140,7 @@ function calculateCompoundInterestAdv(
       monthlyInvestmentHistoryTwo.push(
         new InvestmentHistory(
           currentYearTwo,
-          i,
+          actualMonthTwo,
           sipForThisMonthTwo,
           totalDepositsTwo,
           interestThisStepTwo, // ✅ only non-zero on compounding months
@@ -1093,7 +1150,7 @@ function calculateCompoundInterestAdv(
       );
 
       monthCounterTwo++;
-      if (i % 12 === 0) {
+      if (actualMonthTwo % 12 === 0) {
         currentYearTwo++;
       }
       // Step-up logic for parallel investment SIP
@@ -1141,17 +1198,21 @@ function calculateCompoundInterestAdv(
   }
 
   let activeSipYearsOne = 0;
-  if (sipOne) {
-    if (stopSipOneAfterAPeriod) activeSipYearsOne = stopSipOneAfterYears;
-    else activeSipYearsOne = years;
+  if (sipOne && parallelInvestmentOne) {
+    const actualYearsOne = years - (startingYearOne - startingYear);
+    if (stopSipOneAfterAPeriod)
+      activeSipYearsOne = Math.min(stopSipOneAfterYears, actualYearsOne);
+    else activeSipYearsOne = actualYearsOne;
   } else {
     activeSipYearsOne = 0;
   }
 
   let activeSipYearsTwo = 0;
-  if (sipTwo) {
-    if (stopSipTwoAfterAPeriod) activeSipYearsTwo = stopSipTwoAfterYears;
-    else activeSipYearsTwo = years;
+  if (sipTwo && parallelInvestmentTwo) {
+    const actualYearsTwo = years - (startingYearTwo - startingYear);
+    if (stopSipTwoAfterAPeriod)
+      activeSipYearsTwo = Math.min(stopSipTwoAfterYears, actualYearsTwo);
+    else activeSipYearsTwo = actualYearsTwo;
   } else {
     activeSipYearsTwo = 0;
   }
@@ -1339,8 +1400,19 @@ function calculateCompoundInterestAdv(
   const combinedMonthly = [];
   for (let i = 0; i <= totalMonths; i++) {
     const m1 = monthlyInvestmentHistory[i];
-    const m2 = monthlyInvestmentHistoryOne[i];
-    const m3 = monthlyInvestmentHistoryTwo[i];
+
+    // Only include m2 data if this month is after investment one starts
+    const m2 =
+      parallelInvestmentOne && i > delayMonthsOne
+        ? monthlyInvestmentHistoryOne[i - delayMonthsOne]
+        : null;
+
+    // Only include m3 data if this month is after investment two starts
+    const m3 =
+      parallelInvestmentTwo && i > delayMonthsTwo
+        ? monthlyInvestmentHistoryTwo[i - delayMonthsTwo]
+        : null;
+
     if (m1 || m2 || m3) {
       combinedMonthly.push(
         new InvestmentHistory(
@@ -2635,10 +2707,6 @@ function validateInitialInvestment(showWarning = false) {
   return true;
 }
 
-/**
- * UPDATED: initializeOldApp function
- * Replace the entire function in legacy-app.js
- */
 function initializeOldApp() {
   // Disable autocomplete
   document
@@ -2712,6 +2780,7 @@ function initializeOldApp() {
   toggleStopSip("");
   toggleStopSip("One");
   toggleStopSip("Two");
+  toggleChangeSipAmount("");
   toggleStepUpBonusSIP("");
   toggleAdvSWPStepUp("");
 
@@ -2769,18 +2838,29 @@ function initializeOldApp() {
   document.activeElement.blur();
 }
 
-// Auto-save on input changes for advanced investment section
-document.addEventListener("DOMContentLoaded", () => {
-  const advSection = document.getElementById("investment-calculator");
-  if (advSection) {
-    const debouncedSave = debounce(() => {
-      saveInputs();
-    }, 500);
+window.addEventListener("DOMContentLoaded", () => {
+  console.clear();
+  showSplashScreen();
+  initYearDropdown();
+  loadInputs();
+  initializeOldApp();
+  calculateAll();
+  activateCalculatorFromHash();
 
-    advSection.addEventListener("input", (e) => {
-      if (e.target.matches("input, select")) {
-        debouncedSave();
-      }
-    });
+  const savedTab = localStorage.getItem("activeCalculator");
+  if (!window.location.hash && savedTab && document.getElementById(savedTab)) {
+    const navItem = document.querySelector(`[onclick*="${savedTab}"]`);
+    showCalculator(savedTab, navItem);
   }
+
+  const debouncedCalc = debounce(() => {
+    saveInputs();
+    calculateAll();
+  }, 0);
+
+  document.querySelectorAll("input").forEach((input) => {
+    input.addEventListener("input", debouncedCalc);
+  });
+
+  setupNumberInputs();
 });

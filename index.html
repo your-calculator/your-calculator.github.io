@@ -56,8 +56,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="styles.css" />
-    <link rel="manifest" href="manifest.json" />
+    <link rel="stylesheet" href="styles.css?v=20251123" />
+    <link rel="manifest" href="manifest.json?v=20251123" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -1836,6 +1836,61 @@
                     max="100"
                     class="stopSipAfterYears"
                     placeholder="Enter year"
+                  />
+                </div>
+              </div>
+              <div class="form-row sipRows">
+                <div>
+                  <label>
+                    Change SIP Amount After Years?
+                    <span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        Want to change your SIP amount after a certain number of
+                        years?
+                      </span>
+                    </span>
+                  </label>
+                  <select
+                    name="changeSipAmount"
+                    id="changeSipAmount"
+                    class="changeSipAmount"
+                    onchange="toggleChangeSipAmount('');"
+                  >
+                    <option value="0" selected>No</option>
+                    <option value="1">Yes</option>
+                  </select>
+                </div>
+
+                <div class="changeSipAmountRows">
+                  <label>
+                    Change SIP After Years
+                    <span class="info-icon">
+                      ⓘ
+                      <span class="tooltip">
+                        Ideally this value should be less than total number of
+                        years
+                      </span>
+                    </span>
+                  </label>
+                  <input
+                    type="number"
+                    step="1"
+                    min="1"
+                    max="100"
+                    class="changeSipAmountAfterYears"
+                    placeholder="Enter year"
+                    oninput="saveInputs()"
+                  />
+                </div>
+
+                <div class="changeSipAmountRows">
+                  <label>Updated SIP Amount (₹)</label>
+                  <input
+                    type="text"
+                    class="updatedSipAmount"
+                    placeholder="Enter new SIP amount"
+                    oninput="formatIndianNumber(this); saveInputs();"
                   />
                 </div>
               </div>
@@ -3952,13 +4007,13 @@
       renderCategories();
       renderCalculators();
     </script>
-    <script src="calculators.js"></script>
-    <script src="data-handler.js"></script>
-    <script src="charts.js"></script>
-    <script src="alerts.js"></script>
-    <script src="xirr-calculator.js"></script>
-    <script src="adv-calculator.js"></script>
-    <script src="tax-calculator.js"></script>
-    <script src="script.js"></script>
+    <script src="calculators.js?v=20251123"></script>
+    <script src="data-handler.js?v=20251123"></script>
+    <script src="charts.js?v=20251123"></script>
+    <script src="alerts.js?v=20251123"></script>
+    <script src="xirr-calculator.js?v=20251123"></script>
+    <script src="adv-calculator.js?v=20251123"></script>
+    <script src="tax-calculator.js?v=20251123"></script>
+    <script src="script.js?v=20251123"></script>
   </body>
 </html>
