@@ -68,6 +68,10 @@ const calculatorTitles = {
     title: "Tax Calculator",
     desc: "Calculate Tax Liability, Copmare Regimes and Opt the right regime that suits your needs.",
   },
+  rebalance: {
+    title: "Portfolio Rebalance",
+    desc: "Automatically rebalance your portfolio based on target allocations",
+  },
 };
 
 // Toggle mobile menu
@@ -143,7 +147,7 @@ function showCalculator(id, navItem) {
   // Save active tab
   localStorage.setItem("activeCalculator", id);
 
-  // Update page titles - THIS IS THE MISSING PART!
+  // Update page titles
   const titleInfo = calculatorTitles[id];
   if (titleInfo) {
     const pageTitle = document.getElementById("page-title");
@@ -160,6 +164,14 @@ function showCalculator(id, navItem) {
 
   // Auto-calculate after switching tabs
   setTimeout(() => calculateActive(id), 100);
+
+  // Initialize rebalance calculator with one fund
+  if (id === "rebalance") {
+    const tbody = document.getElementById("rebalanceFundsTableBody");
+    if (tbody && tbody.children.length === 0) {
+      addRebalanceFundRow();
+    }
+  }
 
   history.replaceState(null, null, "#" + id);
 
