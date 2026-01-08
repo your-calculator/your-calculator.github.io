@@ -56,8 +56,8 @@
       rel="stylesheet"
       href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.0/css/all.min.css"
     />
-    <link rel="stylesheet" href="styles.css?v=20251123" />
-    <link rel="manifest" href="manifest.json?v=20251123" />
+    <link rel="stylesheet" href="styles.css?v=20260107" />
+    <link rel="manifest" href="manifest.json?v=20260107" />
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.9.1/chart.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels@2"></script>
@@ -195,6 +195,9 @@
             onclick="showCalculator('tax-calculator', this)"
           >
             🧾 Tax Calculator
+          </button>
+          <button class="nav-item" onclick="showCalculator('rebalance', this)">
+            🔄 Portfolio Rebalance
           </button>
         </nav>
       </aside>
@@ -3764,6 +3767,160 @@
             </div>
           </div>
         </section>
+        <section id="rebalance" class="calculator">
+          <div class="card">
+            <div class="section-header">Investment Details</div>
+
+            <div class="form-group">
+              <label>Monthly Investment Amount (₹)</label>
+              <input
+                type="text"
+                id="rebalance-monthly-investment"
+                placeholder="Enter monthly investment"
+                oninput="formatIndianNumber(this); saveInputs();"
+              />
+            </div>
+
+            <div class="button-container">
+              <button class="btn btn-primary" onclick="addRebalanceFundRow()">
+                + Add Fund
+              </button>
+              <button class="btn btn-danger" onclick="clearAllRebalanceFunds()">
+                Clear All
+              </button>
+            </div>
+
+            <div class="table-wrapper" style="margin-top: 1rem">
+              <table>
+                <thead>
+                  <tr>
+                    <th style="width: 25%">Fund Name</th>
+                    <th style="width: 12%" class="text-right">Target %</th>
+                    <th style="width: 18%" class="text-right">
+                      Current Value (₹)
+                    </th>
+                    <th style="width: 12%" class="text-right">Current %</th>
+                    <th style="width: 12%" class="text-right">Deviation</th>
+                    <th style="width: 8%" class="text-center">Action</th>
+                  </tr>
+                </thead>
+                <tbody id="rebalanceFundsTableBody">
+                  <!-- Dynamic rows will be added here -->
+                </tbody>
+                <tfoot>
+                  <tr>
+                    <td>Total</td>
+                    <td class="text-right" id="rebalanceTotalAllocation">0%</td>
+                    <td class="text-right" id="rebalanceTotalCurrentValue">
+                      ₹0
+                    </td>
+                    <td class="text-right">100%</td>
+                    <td class="text-right">-</td>
+                    <td></td>
+                  </tr>
+                </tfoot>
+              </table>
+            </div>
+
+            <div class="button-container" style="margin-top: 1.5rem">
+              <button
+                class="calculate-btn"
+                onclick="calculateRebalancingPlan()"
+              >
+                Calculate Rebalancing Plan
+              </button>
+              <button
+                id="reset"
+                title="Reset Inputs"
+                onclick="resetSection('rebalance')"
+              >
+                <i class="fas fa-refresh"></i>
+              </button>
+            </div>
+          </div>
+
+          <div id="rebalanceResultsSection" class="hidden">
+            <div class="card">
+              <div class="section-header">Portfolio Summary</div>
+
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Total Portfolio Value</span>
+                  <span class="result-value" id="rebalanceSummaryTotal"
+                    >₹0</span
+                  >
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Monthly Investment</span>
+                  <span class="result-value" id="rebalanceSummaryMonthly"
+                    >₹0</span
+                  >
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Portfolio Status</span>
+                  <span class="result-value" id="rebalanceSummaryStatus"
+                    >-</span
+                  >
+                </div>
+              </div>
+            </div>
+
+            <div class="card" id="rebalancePlanCard">
+              <div class="section-header">Rebalancing Plan</div>
+              <p class="info-text">
+                This plan shows how to distribute your monthly investments to
+                achieve target allocations
+              </p>
+
+              <div class="table-wrapper">
+                <table id="rebalancingPlanTable">
+                  <thead id="rebalancingPlanHeader"></thead>
+                  <tbody id="rebalancingPlanBody"></tbody>
+                </table>
+              </div>
+            </div>
+
+            <div class="card" id="postRebalanceCard">
+              <div class="section-header">Post Rebalancing Summary</div>
+
+              <div class="result-section">
+                <div class="result-item">
+                  <span class="result-label">Final Portfolio Value</span>
+                  <span class="result-value" id="finalRebalancePortfolioValue"
+                    >₹0</span
+                  >
+                </div>
+                <div class="result-item">
+                  <span class="result-label">Rebalancing Completed In</span>
+                  <span class="result-value" id="rebalanceCompletionMonths"
+                    >0 months</span
+                  >
+                </div>
+              </div>
+
+              <div
+                id="rebalanceStatusNote"
+                class="info-text"
+                style="margin-top: 1rem"
+              ></div>
+
+              <div class="table-wrapper" style="margin-top: 1.5rem">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Fund</th>
+                      <th class="text-right">Final Value (₹)</th>
+                      <th class="text-right">Final Allocation %</th>
+                      <th class="text-right">Target %</th>
+                      <th class="text-right">Deviation</th>
+                    </tr>
+                  </thead>
+                  <tbody id="postRebalanceSummaryTable"></tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </section>
       </main>
     </div>
     <script>
@@ -4007,13 +4164,14 @@
       renderCategories();
       renderCalculators();
     </script>
-    <script src="calculators.js?v=20251123"></script>
-    <script src="data-handler.js?v=20251123"></script>
-    <script src="charts.js?v=20251123"></script>
-    <script src="alerts.js?v=20251123"></script>
-    <script src="xirr-calculator.js?v=20251123"></script>
-    <script src="adv-calculator.js?v=20251123"></script>
-    <script src="tax-calculator.js?v=20251123"></script>
-    <script src="script.js?v=20251123"></script>
+    <script src="calculators.js?v=20260107"></script>
+    <script src="data-handler.js?v=20260107"></script>
+    <script src="charts.js?v=20260107"></script>
+    <script src="alerts.js?v=20260107"></script>
+    <script src="xirr-calculator.js?v=20260107"></script>
+    <script src="adv-calculator.js?v=20260107"></script>
+    <script src="tax-calculator.js?v=20260107"></script>
+    <script src="rebalance-calculator.js?v=20260107"></script>
+    <script src="script.js?v=20260107"></script>
   </body>
 </html>

@@ -240,16 +240,24 @@ function saveInputs() {
         input.id &&
         !input.closest(".result-section, .results-chart-container")
       ) {
-        const numValue = getNumericValueFromText(input.value);
-        data[input.id] = numValue;
+        // Skip saving if it's a rebalance fund name (text field) and empty
+        if (input.classList.contains("rebalance-fund-name")) {
+          data[input.id] = input.value; // Save as-is (string)
+        } else {
+          const numValue = getNumericValueFromText(input.value);
+          data[input.id] = numValue;
+        }
       }
 
-      // Also save by class for legacy fields - store numeric value, not formatted string
-      if (input.className && !input.closest("#goalWithdrawalRows")) {
+      // Also save by class for legacy fields
+      if (
+        input.className &&
+        !input.closest("#goalWithdrawalRows, #rebalanceFundsTableBody")
+      ) {
         const mainClass = input.className.split(" ")[0];
-        if (mainClass) {
+        if (mainClass && !mainClass.includes("rebalance-fund")) {
           const numValue = getNumericValueFromText(input.value);
-          data[mainClass] = numValue; // ← Store numeric value instead
+          data[mainClass] = numValue;
         }
       }
     });
@@ -297,6 +305,27 @@ function saveInputs() {
   // Save goal counter
   if (typeof goalCounter !== "undefined") {
     data.goalCounter = goalCounter;
+  }
+
+  // Save rebalance fund rows
+  const rebalanceRows = document.querySelectorAll(
+    "#rebalanceFundsTableBody tr"
+  );
+  if (rebalanceRows.length > 0) {
+    const rebalanceFunds = [];
+    rebalanceRows.forEach((row) => {
+      const nameInput = row.querySelector(".rebalance-fund-name");
+      const allocationInput = row.querySelector(".rebalance-fund-allocation");
+      const valueInput = row.querySelector(".rebalance-fund-value");
+
+      rebalanceFunds.push({
+        name: nameInput?.value ?? "", // Keep as string, don't convert to number
+        allocation: allocationInput?.value ?? "", // Keep raw value
+        value: getNumericValueFromText(valueInput?.value ?? ""), // Only convert current value
+      });
+    });
+    data.rebalanceFunds = rebalanceFunds;
+    data.rebalanceFundCounter = rebalanceFundCounter;
   }
 
   localStorage.setItem(STORAGE_KEY, JSON.stringify(data));
@@ -378,6 +407,28 @@ function loadInputs() {
     // RESTORE counter AFTER loading goals
     if (typeof data.goalCounter !== "undefined") {
       goalCounter = data.goalCounter;
+    }
+
+    // Load rebalance funds
+    if (Array.isArray(data.rebalanceFunds) && data.rebalanceFunds.length > 0) {
+      const tbody = document.getElementById("rebalanceFundsTableBody");
+      if (tbody) {
+        tbody.innerHTML = "";
+        data.rebalanceFunds.forEach((fund) => {
+          // Only format the value field, not name or allocation
+          const formattedValue = fund.value
+            ? formatIndianNumberFromData(fund.value)
+            : "";
+          const fundName = fund.name || ""; // Keep name as-is
+          const fundAllocation = fund.allocation || ""; // Keep allocation as-is
+
+          addRebalanceFundRow(fundName, fundAllocation, formattedValue);
+        });
+      }
+    }
+
+    if (typeof data.rebalanceFundCounter !== "undefined") {
+      rebalanceFundCounter = data.rebalanceFundCounter;
     }
   } catch (err) {
     console.error("Error loading saved data:", err);
@@ -524,6 +575,21 @@ function resetSection(sectionId) {
     }
     if (typeof goalCounter !== "undefined") {
       goalCounter = 1;
+    }
+  } else if (sectionId === "rebalance") {
+    // Clear rebalance specific keys
+    Object.keys(allData).forEach((key) => {
+      if (key.includes("rebalance") || key.includes("Rebalance")) {
+        keysToRemove.push(key);
+      }
+    });
+
+    const rebalanceBody = document.getElementById("rebalanceFundsTableBody");
+    if (rebalanceBody) {
+      rebalanceBody.innerHTML = "";
+    }
+    if (typeof rebalanceFundCounter !== "undefined") {
+      rebalanceFundCounter = 0;
     }
   } else {
     // For simple calculators, remove keys with section prefix

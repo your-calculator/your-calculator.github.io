@@ -2250,6 +2250,336 @@ input[type="number"]::-webkit-outer-spin-button {
   font-weight: 500;
 }
 
+/* ========================================
+   REBALANCE CALCULATOR STYLES
+   ======================================== */
+
+.status-badge {
+  display: inline-block;
+  padding: 0.25rem 0.75rem;
+  border-radius: 20px;
+  font-size: 0.75rem;
+  font-weight: 600;
+}
+
+.status-ok {
+  background: #d1fae5;
+  color: #065f46;
+}
+
+.status-warning {
+  background: #fef3c7;
+  color: #92400e;
+}
+
+.status-error {
+  background: #fee2e2;
+  color: #991b1b;
+}
+
+#rebalance .section-header {
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--text-dark);
+  margin-bottom: 1rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 2px solid var(--primary);
+}
+
+#rebalance .table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 1rem;
+}
+
+#rebalance table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 0;
+}
+
+#rebalance thead {
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#rebalance th {
+  padding: 0.75rem;
+  font-weight: 600;
+  text-align: left;
+  border-bottom: 2px solid var(--border);
+}
+
+#rebalance td {
+  padding: 0.75rem;
+  border-bottom: 1px solid var(--border);
+}
+
+#rebalance tbody tr:hover {
+  background: var(--primary-light);
+}
+
+#rebalance tfoot tr {
+  font-weight: 600;
+  background: var(--bg);
+}
+
+#rebalance tfoot td {
+  border-bottom: none;
+}
+
+#rebalance input.table-input {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  width: 100%;
+}
+
+#rebalance .btn-danger {
+  background: #dc2626;
+  color: white;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+#rebalance .btn-danger:hover {
+  background: #b91c1c;
+  transform: translateY(-1px);
+}
+
+#rebalance .btn-primary {
+  background: var(--primary);
+  color: white;
+  flex: 1;
+  padding: 0.75rem 1.5rem;
+  border-radius: 10px;
+  font-size: 0.9rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s;
+  border: none;
+}
+
+#rebalance .btn-primary:hover {
+  background: var(--primary-hover);
+  transform: translateY(-1px);
+}
+
+#rebalance .btn-secondary {
+  background: var(--bg);
+  color: var(--text-dark);
+  padding: 0.5rem;
+  border-radius: 6px;
+  border: none;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+#rebalance .btn-secondary:hover {
+  background: var(--border);
+}
+
+#rebalance .result-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+  gap: 1rem;
+  margin-top: 1rem;
+}
+
+#rebalance .info-text {
+  font-size: 0.85rem;
+  color: var(--text-light);
+  margin-top: 0.5rem;
+}
+
+#rebalancePlanCard,
+#postRebalanceCard {
+  display: block;
+}
+
+#rebalancePlanCard.hidden,
+#postRebalanceCard.hidden {
+  display: none;
+}
+
+#rebalanceStatusNote {
+  padding: 1rem;
+  border-radius: 8px;
+  background: var(--bg);
+  font-size: 0.9rem;
+  line-height: 1.6;
+}
+
+/* ========================================
+   REBALANCE CALCULATOR STYLES - FIXED
+   ======================================== */
+
+#rebalance .table-wrapper {
+  overflow-x: auto;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  margin-top: 1rem;
+  max-width: 100%;
+}
+
+#rebalance table {
+  width: 100%;
+  min-width: 900px;
+  border-collapse: collapse;
+  font-size: 0.85rem;
+  margin: 0;
+  table-layout: fixed;
+}
+
+#rebalance thead {
+  background: var(--bg);
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+#rebalance th {
+  padding: 0.75rem 0.5rem;
+  font-weight: 600;
+  border-bottom: 2px solid var(--border);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+#rebalance td {
+  padding: 0.75rem 0.5rem;
+  border-bottom: 1px solid var(--border);
+  vertical-align: middle;
+}
+
+#rebalance tbody tr:hover {
+  background: var(--primary-light);
+}
+
+#rebalance tfoot tr {
+  font-weight: 600;
+  background: var(--bg);
+}
+
+#rebalance tfoot td {
+  border-bottom: none;
+  padding: 1rem 0.5rem;
+}
+
+#rebalance input.table-input {
+  padding: 0.5rem;
+  font-size: 0.85rem;
+  border-radius: 6px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+#rebalance .text-right {
+  text-align: right;
+}
+
+#rebalance .text-center {
+  text-align: center;
+}
+
+/* Action button in table */
+#rebalance td .btn-secondary {
+  min-width: 32px;
+  height: 32px;
+  padding: 0.25rem 0.5rem;
+  font-size: 1rem;
+  line-height: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+/* Responsive fixes for rebalance table */
+@media (max-width: 1024px) {
+  #rebalance table {
+    min-width: 800px;
+  }
+
+  #rebalance th,
+  #rebalance td {
+    padding: 0.5rem 0.25rem;
+    font-size: 0.8rem;
+  }
+}
+
+/* Responsive adjustments for rebalance calculator */
+@media (max-width: 768px) {
+  #rebalance table {
+    font-size: 0.75rem;
+  }
+
+  #rebalance th,
+  #rebalance td {
+    padding: 0.5rem;
+  }
+
+  #rebalance input.table-input {
+    padding: 0.4rem;
+    font-size: 0.75rem;
+  }
+
+  #rebalance .result-grid {
+    grid-template-columns: 1fr;
+  }
+
+  #rebalance .button-container {
+    flex-direction: column;
+  }
+
+  #rebalance .btn-primary,
+  #rebalance .btn-danger {
+    width: 100%;
+  }
+
+  #rebalance table {
+    min-width: 700px;
+    font-size: 0.75rem;
+  }
+
+  #rebalance th,
+  #rebalance td {
+    padding: 0.5rem 0.25rem;
+  }
+
+  #rebalance input.table-input {
+    padding: 0.4rem;
+    font-size: 0.75rem;
+  }
+}
+
+@media (max-width: 640px) {
+  #rebalance .card {
+    padding: 1rem;
+  }
+
+  #rebalance .section-header {
+    font-size: 1rem;
+  }
+
+  #rebalance .result-value {
+    font-size: 1.1rem;
+  }
+
+  #rebalance .result-label {
+    font-size: 0.8rem;
+  }
+}
+
 @media (max-width: 640px) {
   .suggestion {
     padding: 1.5rem 0rem;
